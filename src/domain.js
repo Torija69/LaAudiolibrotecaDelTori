@@ -8,6 +8,7 @@ export function selectBooks(books, filters) {
     (!filters.genre || b.genre_id === filters.genre) &&
     (!filters.series || (filters.series === 'none' ? !b.series_id : b.series_id === filters.series)) &&
     (!filters.status || b.status === filters.status) &&
+    (!filters.rating || (filters.rating === 'unrated' ? !b.rating : !!b.rating)) &&
     (!filters.review || (filters.review === 'review' ? b.needs_review : b.genre?.name === 'Sin clasificar'))
   );
   const collator = new Intl.Collator('es', {sensitivity:'base', numeric:true});

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 · 2026-10-24
+
+- Nuevo filtro público «Valoración» en «Más filtros»: todas, sin valorar o valorados. Se combina con el resto de filtros y se limpia al restablecerlos.
+
 ## 1.1.0 · 2026-10-24
 
 - Portada por audiolibro: se sube desde el formulario, se reduce en el navegador a WebP (máx. 600×900 px, 1 MB) y se guarda en el bucket público `audiolibroteca-portadas`. Se puede cambiar o quitar; la imagen anterior se elimina.

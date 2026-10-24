@@ -1,5 +1,10 @@
 # Comprobaciones
 
+## Versión 1.2.0
+
+- 14 pruebas unitarias, incluida la del filtro de valoración (sin valorar, valorados y sin filtro).
+- Navegador con datos reales: 31 sin valorar y 39 valorados de 70, se combina con el resto de filtros, sin errores de consola y sin desbordamiento en escritorio ni a 375 px.
+
 ## Versión 1.1.0
 
 - 13 pruebas unitarias, incluidas validación de resumen, reseña y estrellas y orden por valoración.

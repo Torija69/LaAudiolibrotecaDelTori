@@ -12,6 +12,7 @@ LaAudiolibrotecaDelTori conserva una colección de audiolibros escuchados, consu
 | Importación | 70 registros del Excel, sin duplicación; originales recuperables por el administrador |
 | Consulta | Búsqueda insensible a tildes y mayúsculas por título, créditos o serie |
 | Tipos | Filtros públicos por tipo, con «Sin clasificar» para valores no confirmados |
+| Valoración | Filtro público por valoración: todas, sin valorar o valorados (v1.2.0) |
 | Series | Agrupación y orden numérico; precuela diferenciada; sin inferir integridad de una saga |
 | Alta y edición | Correo y contraseña; solo el administrador autorizado puede escribir |
 | Creación de categorías | Nuevo tipo o serie desde el formulario; guardado atómico |

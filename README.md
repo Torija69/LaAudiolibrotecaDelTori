@@ -2,7 +2,7 @@
 
 Catálogo personal de audiolibros con consulta pública y administración privada. Diseño Torija, variante Taller, con pequeños iconos de libros y fuentes locales Cabinet Grotesk y Satoshi.
 
-- **Versión:** 1.1.0, 24 de octubre de 2026.
+- **Versión:** 1.2.0, 24 de octubre de 2026.
 - **Web:** https://torija69.github.io/LaAudiolibrotecaDelTori/
 - **Patrón:** web estática con Supabase.
 - **Código público:** autorización expresa del propietario para publicar código y GitHub Pages.

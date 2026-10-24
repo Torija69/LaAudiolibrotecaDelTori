@@ -6,7 +6,7 @@ import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook,star
 const $ = s => document.querySelector(s);
 const icons = () => createIcons({icons:{BookOpen,LibraryBig,Library,LockKeyhole,Search,SlidersHorizontal,LayoutGrid,Plus,X,ArrowRight,ArrowUpRight,BookMarked,BookKey,Eye,Check,Pencil,LogOut,RefreshCw,Headphones,ChevronRight,AlertCircle,ImagePlus,Trash2,Star},attrs:{'aria-hidden':'true','stroke-width':1.6}});
 const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
-const state = {books:[],genres:[],series:[],admin:false,view:'books',loading:true,filters:{q:'',genre:'',series:'',status:'',review:'',sort:'collection'}};
+const state = {books:[],genres:[],series:[],admin:false,view:'books',loading:true,filters:{q:'',genre:'',series:'',status:'',rating:'',review:'',sort:'collection'}};
 let dirty = false;
 let saving = false;
 let toastTimer;
@@ -105,8 +105,8 @@ async function refresh() {
   }
 }
 function resetFilters() {
-  Object.assign(state.filters,{q:'',genre:'',series:'',status:'',review:''});
-  $('#search').value='';$('#series-filter').value='';$('#status-filter').value='';$('#review-filter').value='';
+  Object.assign(state.filters,{q:'',genre:'',series:'',status:'',rating:'',review:''});
+  $('#search').value='';$('#series-filter').value='';$('#status-filter').value='';$('#rating-filter').value='';$('#review-filter').value='';
   renderControls();render();
 }
 document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{state.view=btn.dataset.view;render();}));
@@ -115,6 +115,7 @@ $('#sort').addEventListener('change',event=>{state.filters.sort=event.target.val
 $('#genre-filters').addEventListener('click',event=>{const btn=event.target.closest('[data-genre]');if(btn){state.filters.genre=btn.dataset.genre;renderControls();render();}});
 $('#series-filter').addEventListener('change',event=>{state.filters.series=event.target.value;render();});
 $('#status-filter').addEventListener('change',event=>{state.filters.status=event.target.value;render();});
+$('#rating-filter').addEventListener('change',event=>{state.filters.rating=event.target.value;render();});
 $('#review-filter').addEventListener('change',event=>{state.filters.review=event.target.value;render();});
 $('#reset').addEventListener('click',resetFilters);
 $('#toggle-filters').addEventListener('click',()=>{

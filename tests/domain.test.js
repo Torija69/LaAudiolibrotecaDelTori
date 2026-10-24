@@ -36,3 +36,5 @@ test('valida resumen, reseña y estrellas',()=>{
   for(const bad of [{rating:'6'},{rating:'0.5'},{summary:'x'.repeat(5001)},{review:'x'.repeat(5001)}]) assert.notEqual(validateBook({...good,...bad}),'');
   assert.equal(starsLabel(4),'4 de 5 estrellas');assert.equal(starsLabel(null),'Sin valorar');
 });
+
+test('filtra sin valorar y valorados',()=>{const r=[{id:'a',rating:4,title:'A',credits:'',created_at:''},{id:'b',rating:null,title:'B',credits:'',created_at:''},{id:'c',title:'C',credits:'',created_at:''}];assert.deepEqual(selectBooks(r,{rating:'unrated'}).map(b=>b.id).sort(),['b','c']);assert.deepEqual(selectBooks(r,{rating:'rated'}).map(b=>b.id),['a']);assert.equal(selectBooks(r,{}).length,3);});
