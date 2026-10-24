@@ -37,3 +37,10 @@ La sesión se mantiene en memoria, sin cookies ni almacenamiento persistente. As
 ## Modelo
 
 Se ha usado el nivel Alto elegido por el propietario para la implementación y revisión. La aplicación no necesita un modelo de IA ni genera consumo de inferencia durante su uso normal.
+
+## 2026-10-24 · Carga inicial de portadas y sinopsis
+
+- Se cargaron portadas y sinopsis de los 70 audiolibros desde Apple Books (64), Audible (5) y Storytel (1), en ediciones de audiolibro en español.
+- Cada resumen termina con «Sinopsis de la editorial.». Las reseñas personales y las valoraciones no se tocaron.
+- Las portadas se convirtieron a WebP (máximo 600 × 900, calidad 84) con nombre UUID, igual que el editor.
+- La subida usó una Edge Function temporal protegida con secreto; después se sustituyó por una versión que responde 410. El registro de origen de cada libro está fuera del repositorio.
