@@ -20,6 +20,10 @@ El Excel no contiene un campo de tipo ni una estructura normalizada de series. S
 
 La posición 0 identifica una precuela para el orden de consulta, no una afirmación de que sea el primer libro publicado. Los números del Excel no se interpretan como fechas.
 
+## Portadas, reseñas y valoración (v1.1.0)
+
+El propietario pidió portadas, resumen, reseña personal y estrellas, y decidió que todo sea público. Las imágenes se redimensionan en el navegador a WebP para no depender de un servidor de procesamiento y mantener el bucket pequeño. Se usa un bucket propio, independiente del de Dieta, con escritura solo para la allowlist. Se crea `audiolibroteca_save_book_v2` en lugar de modificar la función original; la anterior se conserva por compatibilidad, no toca los campos nuevos y mantiene sus permisos. Las estrellas son enteras (1–5) y opcionales. Desarrollado con el nivel Estándar elegido por el propietario.
+
 ## Seguridad
 
 RLS en todas las tablas; lectura pública solo del catálogo normalizado. Autenticación no implica autorización: una lista de administradores independiente controla la escritura.

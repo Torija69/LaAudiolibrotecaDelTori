@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 · 2026-10-24
+
+- Portada por audiolibro: se sube desde el formulario, se reduce en el navegador a WebP (máx. 600×900 px, 1 MB) y se guarda en el bucket público `audiolibroteca-portadas`. Se puede cambiar o quitar; la imagen anterior se elimina.
+- Resumen del libro y reseña personal, públicos, de hasta 5000 caracteres cada uno.
+- Valoración de 1 a 5 estrellas o «Sin valorar», visible en tarjetas y fichas, y orden «Mejor valorados».
+- Nueva función `audiolibroteca_save_book_v2` con las mismas protecciones: allowlist, RLS, conflicto de versión y duplicados.
+- Solo el administrador puede subir o borrar portadas; los 70 audiolibros existentes se conservan.
+
 ## 1.0.0 · 2026-10-24
 
 - Catálogo público con búsqueda, tipos, estados, ordenación y vista de series.

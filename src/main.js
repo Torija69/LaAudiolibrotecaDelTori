@@ -1,10 +1,10 @@
 import './style.css';
-import {createIcons, BookOpen, LibraryBig, Library, LockKeyhole, Search, SlidersHorizontal, LayoutGrid, Plus, X, ArrowRight, ArrowUpRight, BookMarked, BookKey, Eye, Check, Pencil, LogOut, RefreshCw, Headphones, ChevronRight, AlertCircle} from 'lucide';
-import {supabase,loadCatalogue,isAdmin,saveBook,humanError} from './api.js';
-import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook} from './domain.js';
+import {createIcons, BookOpen, LibraryBig, Library, LockKeyhole, Search, SlidersHorizontal, LayoutGrid, Plus, X, ArrowRight, ArrowUpRight, BookMarked, BookKey, Eye, Check, Pencil, LogOut, RefreshCw, Headphones, ChevronRight, AlertCircle, ImagePlus, Trash2, Star} from 'lucide';
+import {supabase,loadCatalogue,isAdmin,saveBook,humanError,coverURL,prepareCover,uploadCover,removeCover} from './api.js';
+import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook,starsLabel} from './domain.js';
 
 const $ = s => document.querySelector(s);
-const icons = () => createIcons({icons:{BookOpen,LibraryBig,Library,LockKeyhole,Search,SlidersHorizontal,LayoutGrid,Plus,X,ArrowRight,ArrowUpRight,BookMarked,BookKey,Eye,Check,Pencil,LogOut,RefreshCw,Headphones,ChevronRight,AlertCircle},attrs:{'aria-hidden':'true','stroke-width':1.6}});
+const icons = () => createIcons({icons:{BookOpen,LibraryBig,Library,LockKeyhole,Search,SlidersHorizontal,LayoutGrid,Plus,X,ArrowRight,ArrowUpRight,BookMarked,BookKey,Eye,Check,Pencil,LogOut,RefreshCw,Headphones,ChevronRight,AlertCircle,ImagePlus,Trash2,Star},attrs:{'aria-hidden':'true','stroke-width':1.6}});
 const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
 const state = {books:[],genres:[],series:[],admin:false,view:'books',loading:true,filters:{q:'',genre:'',series:'',status:'',review:'',sort:'collection'}};
 let dirty = false;
@@ -48,15 +48,23 @@ function renderControls() {
   $('#account').setAttribute('aria-label',state.admin?'Administrador: sesión activa':'Administrar');
   icons();
 }
+function stars(rating, extra='') {
+  if(!rating) return '';
+  return `<span class="stars ${extra}" role="img" aria-label="${starsLabel(rating)}">${[1,2,3,4,5].map(n=>`<span class="${n<=rating?'on':''}" aria-hidden="true">★</span>`).join('')}</span>`;
+}
+function cover(book, cls) {
+  const url=coverURL(book.cover_path);
+  return url?`<img class="${cls}" src="${e(url)}" alt="Portada de ${e(book.title)}" loading="lazy" decoding="async">`:'';
+}
 function seriesPosition(book) {
   return book.series_label || (book.series_order!=null ? `Libro ${Number(book.series_order)}` : 'Sin orden indicado');
 }
 function card(book) {
   return `<button class="book-card" data-book="${e(book.id)}" aria-label="Ver ficha: ${e(book.title)}">
-    <div class="card-top"><span class="book-symbol">${icon('book-open')}</span><span class="type-label">${e(book.genre?.name || 'Sin clasificar')}</span>${state.admin&&book.needs_review?`<span class="review-dot" title="Datos por revisar">${icon('alert-circle')}</span>`:''}</div>
+    <div class="card-top ${book.cover_path?'with-cover':''}">${cover(book,'card-cover')||`<span class="book-symbol">${icon('book-open')}</span>`}<span class="type-label">${e(book.genre?.name || 'Sin clasificar')}</span>${state.admin&&book.needs_review?`<span class="review-dot" title="Datos por revisar">${icon('alert-circle')}</span>`:''}</div>
     <div class="card-body"><h3>${e(book.title)}</h3><p class="credits">${e(book.credits || 'Créditos por completar')}</p></div>
     <div class="card-series">${book.series?`${icon('library')}<span>${e(book.series.name)}<small>${e(seriesPosition(book))}</small></span>`:`${icon('book-marked')}<span>Sin serie asignada</span>`}</div>
-    <div class="card-bottom"><span class="status-dot ${book.status==='Escuchado'?'done':''}"></span>${e(book.status)}<span class="card-arrow">${icon('arrow-up-right')}</span></div>
+    <div class="card-bottom"><span class="status-dot ${book.status==='Escuchado'?'done':''}"></span>${e(book.status)}${stars(book.rating,'small')}<span class="card-arrow">${icon('arrow-up-right')}</span></div>
   </button>`;
 }
 function render() {
@@ -126,7 +134,7 @@ function openDetail(book) {
   if(!book)return;
   const dialog=$('#detail-dialog');
   const sources=(book.metadata_sources||[]).filter(s=>safeURL(s.url));
-  dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">FICHA DE ESCUCHA</span><button class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><div class="detail-heading"><span class="dialog-symbol">${icon('book-open')}</span><span class="type-badge">${e(book.genre?.name||'Sin clasificar')}</span></div><h2 id="detail-heading">${e(book.title)}</h2><dl class="detail-data"><div><dt>Autoría y créditos</dt><dd>${e(book.credits||'No indicados')}</dd></div><div><dt>Estado</dt><dd>${e(book.status)}</dd></div><div><dt>Serie</dt><dd>${book.series?`${e(book.series.name)} · ${e(seriesPosition(book))}`:'Sin serie asignada'}</dd></div>${book.platform?`<div><dt>Plataforma</dt><dd>${e(book.platform)}</dd></div>`:''}</dl>${book.notes?`<div class="detail-notes"><h3>Notas</h3><p>${e(book.notes).replace(/\n/g,'<br>')}</p></div>`:''}${book.series?`<button class="button secondary" id="explore-series">${icon('library')}Ver esta serie</button>`:''}${sources.length?`<details class="metadata-sources"><summary>Fuentes de clasificación</summary><p>Tipo y orden de serie consultados el 24 de octubre de 2026. Los créditos del Excel se conservan sin reconstruir.</p><ul>${sources.map(s=>`<li><a href="${e(safeURL(s.url))}" target="_blank" rel="noopener noreferrer">${e(s.label)}</a></li>`).join('')}</ul></details>`:''}${state.admin?`<div id="import-info"></div><div class="dialog-actions"><button class="button primary" id="edit-book">${icon('pencil')}Editar audiolibro</button></div>`:''}`;
+  dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">FICHA DE ESCUCHA</span><button class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><div class="detail-heading ${book.cover_path?'with-cover':''}">${cover(book,'detail-cover')||`<span class="dialog-symbol">${icon('book-open')}</span>`}<span class="type-badge">${e(book.genre?.name||'Sin clasificar')}</span></div><h2 id="detail-heading">${e(book.title)}</h2>${book.rating?`<div class="detail-rating">${stars(book.rating)}<span>${starsLabel(book.rating)}</span></div>`:''}<dl class="detail-data"><div><dt>Autoría y créditos</dt><dd>${e(book.credits||'No indicados')}</dd></div><div><dt>Estado</dt><dd>${e(book.status)}</dd></div><div><dt>Serie</dt><dd>${book.series?`${e(book.series.name)} · ${e(seriesPosition(book))}`:'Sin serie asignada'}</dd></div>${book.platform?`<div><dt>Plataforma</dt><dd>${e(book.platform)}</dd></div>`:''}</dl>${book.summary?`<section class="detail-text"><h3>Resumen</h3><p>${e(book.summary).replace(/\n/g,'<br>')}</p></section>`:''}${book.review?`<section class="detail-text review"><h3>Mi reseña</h3><p>${e(book.review).replace(/\n/g,'<br>')}</p></section>`:''}${book.notes?`<div class="detail-notes"><h3>Notas</h3><p>${e(book.notes).replace(/\n/g,'<br>')}</p></div>`:''}${book.series?`<button class="button secondary" id="explore-series">${icon('library')}Ver esta serie</button>`:''}${sources.length?`<details class="metadata-sources"><summary>Fuentes de clasificación</summary><p>Tipo y orden de serie consultados el 24 de octubre de 2026. Los créditos del Excel se conservan sin reconstruir.</p><ul>${sources.map(s=>`<li><a href="${e(safeURL(s.url))}" target="_blank" rel="noopener noreferrer">${e(s.label)}</a></li>`).join('')}</ul></details>`:''}${state.admin?`<div id="import-info"></div><div class="dialog-actions"><button class="button primary" id="edit-book">${icon('pencil')}Editar audiolibro</button></div>`:''}`;
   show(dialog);
   $('#explore-series')?.addEventListener('click',()=>{
     dialog.close();resetFilters();state.view='series';state.filters.series=book.series_id;renderControls();render();$('#extra-filters').hidden=false;$('#toggle-filters').setAttribute('aria-expanded','true');$('#catalogue').scrollIntoView({behavior:'smooth'});
@@ -178,22 +186,46 @@ $('#add-book').addEventListener('click',()=>openEditor());
 function openEditor(book) {
   if(!state.admin){show($('#login-dialog'));return;}
   const dialog=$('#edit-dialog');dirty=false;
-  dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">ADMINISTRACIÓN</span><button type="button" class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><h2 id="edit-heading">${book?'Editar audiolibro':'Una historia más'}</h2><p class="muted">Los campos con * son obligatorios. Al guardar, la ficha será visible para todos.</p><form id="book-form"><label>Título *<input name="title" required maxlength="300" value="${e(book?.title||'')}" autofocus></label><label>Autoría y créditos *<input name="credits" required maxlength="500" value="${e(book?.credits||'')}"><small>Conserva aquí autores, traducción o narración si quieres incluirlos.</small></label><div class="form-grid"><label>Tipo *<input name="genre" list="genre-options" required maxlength="80" value="${e(book?.genre?.name||'Sin clasificar')}"><datalist id="genre-options">${state.genres.map(g=>`<option value="${e(g.name)}">`).join('')}</datalist><small>Elige uno existente o escribe un tipo nuevo.</small></label><label>Estado<select name="status">${['Escuchado','Escuchando','Pendiente'].map(s=>`<option ${s===(book?.status||'Escuchado')?'selected':''}>${s}</option>`).join('')}</select></label></div><label>Serie<input name="series" list="series-options" maxlength="150" placeholder="Sin serie asignada" value="${e(book?.series?.name||'')}"><datalist id="series-options">${state.series.map(s=>`<option value="${e(s.name)}">`).join('')}</datalist><small>Puedes elegir una serie o crear una nueva escribiendo su nombre.</small></label><div class="form-grid"><label>Número en la serie<input name="order" type="number" min="0" max="9999" step="0.01" value="${book?.series_order!=null?Number(book.series_order):''}" placeholder="1, 2, 3…"></label><label>Etiqueta de orden<input name="series_label" maxlength="60" value="${e(book?.series_label||'')}" placeholder="Ej. Precuela"></label></div><label>Plataforma<input name="platform" maxlength="100" value="${e(book?.platform||'')}" placeholder="Opcional"></label><label>Notas públicas<textarea name="notes" rows="3" maxlength="3000" placeholder="Una impresión, una recomendación…">${e(book?.notes||'')}</textarea><small>No incluyas información privada: estas notas son públicas.</small></label><label class="checkbox-label"><input name="needs_review" type="checkbox" ${book?.needs_review?'checked':''}>Marcar los datos para revisar</label><p id="book-error" class="form-error" role="alert"></p><div class="dialog-actions"><button class="button quiet" type="button" data-close>Cancelar</button><button class="button primary" type="submit">${icon('check')}${book?'Guardar cambios':'Añadir a la colección'}</button></div></form>`;
+  dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">ADMINISTRACIÓN</span><button type="button" class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><h2 id="edit-heading">${book?'Editar audiolibro':'Una historia más'}</h2><p class="muted">Los campos con * son obligatorios. Al guardar, la ficha será visible para todos.</p><form id="book-form"><label>Título *<input name="title" required maxlength="300" value="${e(book?.title||'')}" autofocus></label><label>Autoría y créditos *<input name="credits" required maxlength="500" value="${e(book?.credits||'')}"><small>Conserva aquí autores, traducción o narración si quieres incluirlos.</small></label><div class="form-grid"><label>Tipo *<input name="genre" list="genre-options" required maxlength="80" value="${e(book?.genre?.name||'Sin clasificar')}"><datalist id="genre-options">${state.genres.map(g=>`<option value="${e(g.name)}">`).join('')}</datalist><small>Elige uno existente o escribe un tipo nuevo.</small></label><label>Estado<select name="status">${['Escuchado','Escuchando','Pendiente'].map(s=>`<option ${s===(book?.status||'Escuchado')?'selected':''}>${s}</option>`).join('')}</select></label></div><label>Serie<input name="series" list="series-options" maxlength="150" placeholder="Sin serie asignada" value="${e(book?.series?.name||'')}"><datalist id="series-options">${state.series.map(s=>`<option value="${e(s.name)}">`).join('')}</datalist><small>Puedes elegir una serie o crear una nueva escribiendo su nombre.</small></label><div class="form-grid"><label>Número en la serie<input name="order" type="number" min="0" max="9999" step="0.01" value="${book?.series_order!=null?Number(book.series_order):''}" placeholder="1, 2, 3…"></label><label>Etiqueta de orden<input name="series_label" maxlength="60" value="${e(book?.series_label||'')}" placeholder="Ej. Precuela"></label></div><label>Plataforma<input name="platform" maxlength="100" value="${e(book?.platform||'')}" placeholder="Opcional"></label><fieldset class="cover-field"><legend>Portada</legend><div class="cover-editor"><div id="cover-preview" class="cover-preview">${cover(book||{},'')||icon('image-plus')}</div><div class="cover-actions"><label class="button secondary file-button">${icon('image-plus')}<span id="cover-pick-label">${book?.cover_path?'Cambiar imagen':'Elegir imagen'}</span><input id="cover-input" type="file" accept="image/*" class="sr-only"></label><button type="button" class="button quiet" id="cover-remove" ${book?.cover_path?'':'hidden'}>${icon('trash-2')}Quitar portada</button><small>JPG, PNG o WebP. Se reduce automáticamente antes de subirla y será pública.</small></div></div></fieldset><label>Resumen del libro<textarea name="summary" rows="4" maxlength="5000" placeholder="De qué trata la historia…">${e(book?.summary||'')}</textarea></label><label>Mi reseña<textarea name="review" rows="4" maxlength="5000" placeholder="Qué te pareció…">${e(book?.review||'')}</textarea><small>El resumen y la reseña son públicos.</small></label><fieldset class="rating-field"><legend>Valoración</legend><div class="rating-input">${[5,4,3,2,1].map(n=>`<input type="radio" name="rating" id="rating-${n}" value="${n}" ${book?.rating===n?'checked':''}><label for="rating-${n}" title="${starsLabel(n)}"><span class="sr-only">${starsLabel(n)}</span>★</label>`).join('')}</div><label class="checkbox-label"><input type="radio" name="rating" value="" ${book?.rating?'':'checked'}>Sin valorar</label></fieldset><label>Notas públicas<textarea name="notes" rows="3" maxlength="3000" placeholder="Una impresión, una recomendación…">${e(book?.notes||'')}</textarea><small>No incluyas información privada: estas notas son públicas.</small></label><label class="checkbox-label"><input name="needs_review" type="checkbox" ${book?.needs_review?'checked':''}>Marcar los datos para revisar</label><p id="book-error" class="form-error" role="alert"></p><div class="dialog-actions"><button class="button quiet" type="button" data-close>Cancelar</button><button class="button primary" type="submit">${icon('check')}${book?'Guardar cambios':'Añadir a la colección'}</button></div></form>`;
   show(dialog);
   const form=$('#book-form');
   form.addEventListener('input',()=>{dirty=true;});
+  let coverBlob=null, coverRemoved=false, previewURL='';
+  const preview=$('#cover-preview');
+  const setPreview=html=>{if(previewURL)URL.revokeObjectURL(previewURL);previewURL='';preview.innerHTML=html;icons();};
+  $('#cover-input').addEventListener('change',async event=>{
+    const file=event.target.files[0];event.target.value='';if(!file)return;
+    $('#book-error').textContent='';preview.classList.add('busy');
+    try{
+      coverBlob=await prepareCover(file);coverRemoved=false;dirty=true;
+      setPreview('');previewURL=URL.createObjectURL(coverBlob);
+      preview.innerHTML=`<img src="${previewURL}" alt="Vista previa de la nueva portada">`;
+      $('#cover-remove').hidden=false;$('#cover-pick-label').textContent='Cambiar imagen';
+    }catch(error){$('#book-error').textContent=humanError(error);}
+    finally{preview.classList.remove('busy');}
+  });
+  $('#cover-remove').addEventListener('click',()=>{
+    coverBlob=null;coverRemoved=true;dirty=true;setPreview(icon('image-plus'));
+    $('#cover-remove').hidden=true;$('#cover-pick-label').textContent='Elegir imagen';
+  });
   form.addEventListener('submit',async event=>{
     event.preventDefault();
     const data=Object.fromEntries(new FormData(form));data.needs_review=form.needs_review.checked;
     const problem=validateBook(data);$('#book-error').textContent=problem;if(problem)return;
     const duplicate=state.books.find(b=>b.id!==book?.id && fold(b.title).trim()===fold(data.title).trim() && fold(b.credits).trim()===fold(data.credits).trim() && fold(b.platform).trim()===fold(data.platform).trim());
     if(duplicate){$('#book-error').textContent='Este título con los mismos créditos y plataforma ya está en la colección.';return;}
-    const button=form.querySelector('[type=submit]');button.disabled=true;saving=true;button.textContent='Guardando…';
+    const button=form.querySelector('[type=submit]');button.disabled=true;saving=true;button.textContent=coverBlob?'Subiendo portada…':'Guardando…';
+    const previous=book?.cover_path||null;let uploaded=null;
     try{
-      await saveBook(data,book);dirty=false;saving=false;dialog.close();
+      if(coverBlob){uploaded=await uploadCover(coverBlob);button.textContent='Guardando…';}
+      data.cover_path=uploaded||(coverRemoved?null:previous);
+      await saveBook(data,book);
+      if(previous&&previous!==data.cover_path)removeCover(previous);
+      uploaded=null;if(previewURL)URL.revokeObjectURL(previewURL);
+      dirty=false;saving=false;dialog.close();
       const loaded=await refresh();
       toast(loaded?(book?'Cambios guardados en Supabase.':'Audiolibro añadido a la colección.'):'Guardado en Supabase. No se ha podido recargar el catálogo; pulsa «Volver a intentar».');
-    }catch(error){$('#book-error').textContent=humanError(error);}
+    }catch(error){if(uploaded)removeCover(uploaded);$('#book-error').textContent=humanError(error);}
     finally{saving=false;button.disabled=false;button.innerHTML=icon('check')+(book?'Guardar cambios':'Añadir a la colección');icons();}
   });
 }

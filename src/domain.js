@@ -13,6 +13,7 @@ export function selectBooks(books, filters) {
   const collator = new Intl.Collator('es', {sensitivity:'base', numeric:true});
   return result.sort((a,b) => filters.sort === 'title' ? collator.compare(a.title,b.title) :
     filters.sort === 'author' ? collator.compare(a.credits,b.credits) || collator.compare(a.title,b.title) :
+    filters.sort === 'rating' ? (b.rating || 0) - (a.rating || 0) || collator.compare(a.title,b.title) :
     filters.sort === 'recent' ? b.created_at.localeCompare(a.created_at) || (b.source_number || 0) - (a.source_number || 0) :
     (a.source_number ?? 1000000) - (b.source_number ?? 1000000) || b.created_at.localeCompare(a.created_at));
 }
@@ -28,5 +29,9 @@ export function validateBook(book) {
   if (!book.series && book.order !== '') return 'Asigna una serie antes de indicar su número.';
   if (!['Escuchado','Escuchando','Pendiente'].includes(book.status)) return 'Selecciona un estado válido.';
   if ((book.notes || '').length > 3000) return 'Las notas pueden tener como máximo 3000 caracteres.';
+  if ((book.summary || '').length > 5000) return 'El resumen puede tener como máximo 5000 caracteres.';
+  if ((book.review || '').length > 5000) return 'La reseña puede tener como máximo 5000 caracteres.';
+  if (book.rating && !['1','2','3','4','5',1,2,3,4,5].includes(book.rating)) return 'La valoración debe estar entre 1 y 5 estrellas.';
   return '';
 }
+export const starsLabel = rating => rating ? `${rating} de 5 estrellas` : 'Sin valorar';

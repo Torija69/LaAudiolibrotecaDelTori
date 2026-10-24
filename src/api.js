@@ -25,8 +25,36 @@ export async function isAdmin() {
   if(error) throw error;
   return data === true;
 }
+export const COVER_BUCKET = 'audiolibroteca-portadas';
+export function coverURL(path) {
+  if (!path || !/^[0-9a-f-]{36}\.webp$/.test(path)) return '';
+  return supabase.storage.from(COVER_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+// Resize in the browser to a light WebP (max 900 px tall) before uploading.
+export async function prepareCover(file) {
+  if (!file.type.startsWith('image/')) throw new Error('COVER_TYPE');
+  if (file.size > 15 * 1024 * 1024) throw new Error('COVER_SIZE');
+  const bitmap = await createImageBitmap(file).catch(() => { throw new Error('COVER_TYPE'); });
+  const scale = Math.min(1, 900 / bitmap.height, 600 / bitmap.width);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close?.();
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.84));
+  if (!blob || blob.type !== 'image/webp' || blob.size > 1048576) throw new Error('COVER_SIZE');
+  return blob;
+}
+export async function uploadCover(blob) {
+  const path = `${crypto.randomUUID()}.webp`;
+  const {error} = await supabase.storage.from(COVER_BUCKET).upload(path, blob, {contentType:'image/webp', cacheControl:'31536000', upsert:false});
+  if (error) throw error;
+  return path;
+}
+export async function removeCover(path) {
+  if (path) await supabase.storage.from(COVER_BUCKET).remove([path]).catch(() => {});
+}
 export async function saveBook(input, existing) {
-  const {data,error} = await supabase.rpc('audiolibroteca_save_book', {
+  const {data,error} = await supabase.rpc('audiolibroteca_save_book_v2', {
     p_id: existing?.id || null,
     p_expected_updated_at: existing?.updated_at || null,
     p_title: input.title.trim(),
@@ -38,12 +66,18 @@ export async function saveBook(input, existing) {
     p_status: input.status,
     p_platform: input.platform.trim(),
     p_notes: input.notes.trim(),
-    p_needs_review: input.needs_review
+    p_needs_review: input.needs_review,
+    p_summary: (input.summary || '').trim(),
+    p_review: (input.review || '').trim(),
+    p_rating: input.rating ? Number(input.rating) : null,
+    p_cover_path: input.cover_path || null
   });
   if(error) throw error;
   return data;
 }
 export function humanError(error) {
+  if (error?.message === 'COVER_TYPE') return 'La portada debe ser una imagen (JPG, PNG, WebP o HEIC compatible con tu navegador).';
+  if (error?.message === 'COVER_SIZE') return 'La imagen es demasiado grande. Prueba con una de menos de 15 MB.';
   if (error?.code === '23505') return 'Ya existe un audiolibro con ese título, créditos y plataforma. Revisa el registro existente.';
   if (error?.message?.includes('CONFLICT')) return 'Este audiolibro ha cambiado desde que lo abriste. Cierra la ficha, actualiza la página y revisa los cambios antes de guardar.';
   if (error?.code === '42501' || error?.message?.includes('ADMIN_REQUIRED')) return 'No tienes permiso para guardar. Vuelve a iniciar sesión con la cuenta de administrador.';

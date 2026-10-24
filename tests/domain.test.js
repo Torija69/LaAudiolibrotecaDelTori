@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook} from '../src/domain.js';
+import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook,starsLabel} from '../src/domain.js';
 const books=[
   {id:'a',title:'El día',credits:'Álvaro',genre_id:'g1',genre:{name:'Fantasía'},series_id:'s1',series:{name:'Serie Á'},series_order:2,source_number:1,created_at:'2026-01-01',status:'Escuchado',needs_review:false},
   {id:'b',title:'Otra',credits:'Beatriz',genre_id:'g2',genre:{name:'Sin clasificar'},series_id:null,series_order:null,source_number:2,created_at:'2026-01-02',status:'Pendiente',needs_review:true},
@@ -24,4 +24,15 @@ test('valida título, créditos, número y estado',()=>{
   const good={title:'Libro',credits:'Autor',genre:'Fantasía',series:'Serie',order:'0',status:'Escuchado'};
   assert.equal(validateBook(good),'');
   for(const bad of [{title:''},{credits:''},{genre:''},{order:'-1'},{order:'NaN'},{series:''},{status:'Inventado'}]) assert.notEqual(validateBook({...good,...bad}),'');
+});
+test('ordena por valoración y deja los no valorados al final',()=>{
+  const rated=[{...books[0],rating:3},{...books[1],rating:null},{...books[2],rating:5}];
+  assert.deepEqual(selectBooks(rated,{sort:'rating'}).map(b=>b.id),['c','a','b']);
+});
+test('valida resumen, reseña y estrellas',()=>{
+  const good={title:'Libro',credits:'Autor',genre:'Fantasía',series:'',order:'',status:'Escuchado',summary:'Sinopsis',review:'Me gustó',rating:'5'};
+  assert.equal(validateBook(good),'');
+  assert.equal(validateBook({...good,rating:''}),'');
+  for(const bad of [{rating:'6'},{rating:'0.5'},{summary:'x'.repeat(5001)},{review:'x'.repeat(5001)}]) assert.notEqual(validateBook({...good,...bad}),'');
+  assert.equal(starsLabel(4),'4 de 5 estrellas');assert.equal(starsLabel(null),'Sin valorar');
 });

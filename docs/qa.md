@@ -1,4 +1,13 @@
-# Comprobaciones de la versión 1.0.0
+# Comprobaciones
+
+## Versión 1.1.0
+
+- 13 pruebas unitarias, incluidas validación de resumen, reseña y estrellas y orden por valoración.
+- Base real con rollback: autenticado no administrador no puede guardar ni subir portadas; administrador guarda resumen, reseña, valoración y portada, edita y las quita. Se rechazan estrellas fuera de 1–5 y rutas de portada no válidas. 70 libros y Dieta (8 filas) sin cambios.
+- Navegador con autenticación y Storage simulados: subida de imagen redimensionada a WebP, cambio con borrado de la anterior, eliminación, estrellas, reseña con HTML escapado, orden «Mejor valorados», escritorio y 375 px sin desbordamiento.
+- Pendiente: primera subida real de portada con la cuenta del propietario.
+
+# Versión 1.0.0
 
 ## Automatizadas
 

@@ -17,13 +17,15 @@ LaAudiolibrotecaDelTori conserva una colección de audiolibros escuchados, consu
 | Creación de categorías | Nuevo tipo o serie desde el formulario; guardado atómico |
 | Validación | Obligatorios, límites de longitud, número no negativo, duplicado exacto |
 | Concurrencia | No sobrescribir silenciosamente una ficha que cambió desde su apertura |
+| Portada, resumen y reseña | Imagen opcional por ficha (subir, cambiar, quitar); resumen y reseña públicos de hasta 5000 caracteres |
+| Valoración | 1 a 5 estrellas o sin valorar; visible en tarjeta y ficha; orden «Mejor valorados» |
 | Error | Mensaje y reintento al fallar la carga; no datos ficticios de sustitución |
 | Infraestructura | Repositorio público autorizado, GitHub Pages, Supabase existente aislado por tablas y RLS |
 | Integración | Documentación ASDLC, catálogo y ficha del dosier |
 
 ## Modelo de datos
 
-- `audiolibroteca_books`: título, créditos, tipo, serie y orden, etiqueta, estado, plataforma, notas públicas, marca de revisión, fuentes de metadatos, número de Excel y fechas técnicas.
+- `audiolibroteca_books` (v1.1.0 añade `summary`, `review`, `rating` y `cover_path`): título, créditos, tipo, serie y orden, etiqueta, estado, plataforma, notas públicas, marca de revisión, fuentes de metadatos, número de Excel y fechas técnicas.
 - `audiolibroteca_genres`: tipos editables mediante alta de fichas.
 - `audiolibroteca_series`: series y URL de referencia.
 - `audiolibroteca_admins`: lista de usuarios autorizados, sin permisos API de autoalta.
