@@ -2,7 +2,7 @@
 
 Catálogo personal de audiolibros con consulta pública y administración privada. Diseño Torija, variante Taller, con pequeños iconos de libros y fuentes locales Cabinet Grotesk y Satoshi.
 
-- **Versión:** 1.2.0, 24 de octubre de 2026.
+- **Versión:** 1.3.0, 24 de octubre de 2026.
 - **Web:** https://torija69.github.io/LaAudiolibrotecaDelTori/
 - **Patrón:** web estática con Supabase.
 - **Código público:** autorización expresa del propietario para publicar código y GitHub Pages.
@@ -23,7 +23,7 @@ No reproduce ni aloja archivos de audio. No ofrece registro público, borrado de
 
 ## Datos iniciales
 
-Se importaron 70 filas del Excel del propietario. El orden de la hoja se conserva como «Orden del Excel»; no se deducen fechas ni una cronología de escucha.
+Se importaron 70 filas del Excel del propietario. El número de fila del Excel se conserva internamente, pero desde la v1.3.0 el catálogo se ordena por título por defecto; no se deducen fechas ni una cronología de escucha.
 
 Se agruparon 28 audiolibros en 9 series. Hay 31 fichas con tipo respaldado por fuentes y 39 «Sin clasificar», pendientes de revisión editorial. No se ha presentado una clasificación automática como verificada ni se han inventado créditos truncados. Los enlaces usados se muestran dentro de las fichas correspondientes.
 

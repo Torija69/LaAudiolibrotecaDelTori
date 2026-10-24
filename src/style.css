@@ -12,7 +12,8 @@ dialog{color:var(--ink);background:var(--surface);border:1px solid var(--line);b
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.book-card:hover{transform:none}}
 /* v1.1.0 · portadas, resumen, reseña y valoración */
 .stars{display:inline-flex;gap:1px;color:#c9ccbb;font-size:16px;line-height:1;letter-spacing:0}.stars .on{color:#5f6728}.stars.small{font-size:12px;margin-left:8px}
-.card-top.with-cover{align-items:flex-start}.card-cover{width:54px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--line);background:var(--sage);flex-shrink:0}
+.card-cover-frame{aspect-ratio:1/1;width:100%;margin:0 0 14px;border-radius:10px;overflow:hidden;background:var(--sage);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}.card-cover{width:100%;height:100%;object-fit:cover;display:block}.card-cover-empty{display:grid;place-items:center;width:100%;height:100%;color:#7b8843}.card-cover-empty svg{width:44px;height:44px;stroke-width:1.2}.book-card .card-top{margin-bottom:8px;min-height:0}.book-card .card-series{margin-top:14px}
+@media(max-width:480px){.card-cover-frame{margin-bottom:11px;border-radius:8px}.card-cover-empty svg{width:34px;height:34px}.book-card h3{font-size:16px}}
 .detail-heading.with-cover{align-items:flex-end}.detail-cover{width:140px;max-height:210px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:var(--sage)}
 .detail-rating{display:flex;align-items:center;gap:10px;margin:-4px 0 6px;font-size:13px;color:var(--muted)}.detail-rating .stars{font-size:20px}
 .detail-text{margin:0 0 18px}.detail-text h3{font-size:18px;margin-bottom:8px}.detail-text p{font-size:14px;line-height:1.65;overflow-wrap:anywhere}.detail-text.review{padding:16px;border-left:3px solid var(--lime);background:var(--paper);border-radius:0 8px 8px 0}

@@ -1,5 +1,10 @@
 # Comprobaciones
 
+## Versión 1.3.0
+
+- 15 pruebas unitarias, incluido el orden por defecto por título ignorando signos.
+- Navegador con datos reales a 1280, 768 y 375 px: portada cuadrada a lo ancho de cada tarjeta, sin desbordamiento ni errores de consola; el selector ya no ofrece «Orden del Excel».
+
 ## Versión 1.2.0
 
 - 14 pruebas unitarias, incluida la del filtro de valoración (sin valorar, valorados y sin filtro).

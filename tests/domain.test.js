@@ -38,3 +38,4 @@ test('valida resumen, reseña y estrellas',()=>{
 });
 
 test('filtra sin valorar y valorados',()=>{const r=[{id:'a',rating:4,title:'A',credits:'',created_at:''},{id:'b',rating:null,title:'B',credits:'',created_at:''},{id:'c',title:'C',credits:'',created_at:''}];assert.deepEqual(selectBooks(r,{rating:'unrated'}).map(b=>b.id).sort(),['b','c']);assert.deepEqual(selectBooks(r,{rating:'rated'}).map(b=>b.id),['a']);assert.equal(selectBooks(r,{}).length,3);});
+test('orden por defecto: título sin tener en cuenta paréntesis',()=>{const r=[{id:'z',title:'Zeta',credits:'',created_at:''},{id:'b',title:'(BlackWater I) La riada',credits:'',created_at:''},{id:'a',title:'Amagi',credits:'',created_at:''}];assert.deepEqual(selectBooks(r,{}).map(b=>b.id),['a','b','z']);});

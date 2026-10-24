@@ -6,7 +6,7 @@ import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook,star
 const $ = s => document.querySelector(s);
 const icons = () => createIcons({icons:{BookOpen,LibraryBig,Library,LockKeyhole,Search,SlidersHorizontal,LayoutGrid,Plus,X,ArrowRight,ArrowUpRight,BookMarked,BookKey,Eye,Check,Pencil,LogOut,RefreshCw,Headphones,ChevronRight,AlertCircle,ImagePlus,Trash2,Star},attrs:{'aria-hidden':'true','stroke-width':1.6}});
 const icon = name => `<i data-lucide="${name}" aria-hidden="true"></i>`;
-const state = {books:[],genres:[],series:[],admin:false,view:'books',loading:true,filters:{q:'',genre:'',series:'',status:'',rating:'',review:'',sort:'collection'}};
+const state = {books:[],genres:[],series:[],admin:false,view:'books',loading:true,filters:{q:'',genre:'',series:'',status:'',rating:'',review:'',sort:'title'}};
 let dirty = false;
 let saving = false;
 let toastTimer;
@@ -61,7 +61,8 @@ function seriesPosition(book) {
 }
 function card(book) {
   return `<button class="book-card" data-book="${e(book.id)}" aria-label="Ver ficha: ${e(book.title)}">
-    <div class="card-top ${book.cover_path?'with-cover':''}">${cover(book,'card-cover')||`<span class="book-symbol">${icon('book-open')}</span>`}<span class="type-label">${e(book.genre?.name || 'Sin clasificar')}</span>${state.admin&&book.needs_review?`<span class="review-dot" title="Datos por revisar">${icon('alert-circle')}</span>`:''}</div>
+    <div class="card-cover-frame">${cover(book,'card-cover')||`<span class="card-cover-empty">${icon('book-open')}</span>`}</div>
+    <div class="card-top"><span class="type-label">${e(book.genre?.name || 'Sin clasificar')}</span>${state.admin&&book.needs_review?`<span class="review-dot" title="Datos por revisar">${icon('alert-circle')}</span>`:''}</div>
     <div class="card-body"><h3>${e(book.title)}</h3><p class="credits">${e(book.credits || 'Créditos por completar')}</p></div>
     <div class="card-series">${book.series?`${icon('library')}<span>${e(book.series.name)}<small>${e(seriesPosition(book))}</small></span>`:`${icon('book-marked')}<span>Sin serie asignada</span>`}</div>
     <div class="card-bottom"><span class="status-dot ${book.status==='Escuchado'?'done':''}"></span>${e(book.status)}${stars(book.rating,'small')}<span class="card-arrow">${icon('arrow-up-right')}</span></div>

@@ -11,12 +11,12 @@ export function selectBooks(books, filters) {
     (!filters.rating || (filters.rating === 'unrated' ? !b.rating : !!b.rating)) &&
     (!filters.review || (filters.review === 'review' ? b.needs_review : b.genre?.name === 'Sin clasificar'))
   );
-  const collator = new Intl.Collator('es', {sensitivity:'base', numeric:true});
+  const collator = new Intl.Collator('es', {sensitivity:'base', numeric:true, ignorePunctuation:true});
   return result.sort((a,b) => filters.sort === 'title' ? collator.compare(a.title,b.title) :
     filters.sort === 'author' ? collator.compare(a.credits,b.credits) || collator.compare(a.title,b.title) :
     filters.sort === 'rating' ? (b.rating || 0) - (a.rating || 0) || collator.compare(a.title,b.title) :
     filters.sort === 'recent' ? b.created_at.localeCompare(a.created_at) || (b.source_number || 0) - (a.source_number || 0) :
-    (a.source_number ?? 1000000) - (b.source_number ?? 1000000) || b.created_at.localeCompare(a.created_at));
+    collator.compare(a.title,b.title));
 }
 export function orderedSeries(books) {
   return [...books].sort((a,b) => (a.series_order ?? 999999) - (b.series_order ?? 999999) || a.title.localeCompare(b.title,'es'));

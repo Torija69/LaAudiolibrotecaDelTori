@@ -44,3 +44,8 @@ Se ha usado el nivel Alto elegido por el propietario para la implementación y r
 - Cada resumen termina con «Sinopsis de la editorial.». Las reseñas personales y las valoraciones no se tocaron.
 - Las portadas se convirtieron a WebP (máximo 600 × 900, calidad 84) con nombre UUID, igual que el editor.
 - La subida usó una Edge Function temporal protegida con secreto; después se sustituyó por una versión que responde 410. El registro de origen de cada libro está fuera del repositorio.
+
+## 2026-10-24 · Portada grande y fin del orden del Excel (v1.3.0)
+
+- A petición del propietario, la portada pasa a ocupar el ancho de la tarjeta en formato cuadrado, porque todas las portadas de audiolibro son cuadradas y la miniatura vertical las recortaba.
+- Se retira «Orden del Excel». El orden por defecto es título A–Z, ignorando signos. `source_number` se mantiene para la trazabilidad.

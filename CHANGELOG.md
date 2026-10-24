@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0 · 2026-10-24
+
+- Portada grande y cuadrada en la parte superior de cada tarjeta de la cuadrícula; icono de libro sobre fondo verde cuando no hay portada.
+- Se elimina el orden «Orden del Excel»; el catálogo se ordena por título A–Z por defecto, sin tener en cuenta paréntesis ni signos (los Blackwater van en la B). El número de fila del Excel se sigue conservando para la trazabilidad del administrador.
+
 ## 1.2.0 · 2026-10-24
 
 - Nuevo filtro público «Valoración» en «Más filtros»: todas, sin valorar o valorados. Se combina con el resto de filtros y se limpia al restablecerlos.
