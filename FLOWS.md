@@ -3,7 +3,7 @@
 ## Catálogo público
 - Abrir la web: 74 audiolibros y 9 series en la revisión previa.
 - Buscar por título; combinar tipo, serie, estado y valoración; limpiar filtros.
-- Cambiar orden y alternar cuadrícula/lista.
+- Cambiar orden y alternar audiolibros/agrupación por series.
 - Abrir ficha, comprobar portada, resumen, reseña y estrellas cuando existan.
 - Entrar en Series, desplegar una serie y abrir una ficha.
 - Abrir Administrar, comprobar formulario y cerrarlo sin iniciar sesión.

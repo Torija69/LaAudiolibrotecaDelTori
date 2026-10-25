@@ -1,5 +1,19 @@
 # Comprobaciones
 
+## Versión 1.3.2
+
+- Migración aplicada: cinco tablas y cuatro funciones en `"Audiobiblioteca"`; ninguna tabla de la aplicación permanece en `public`.
+- Comprobaciones en la transacción: mismas filas, huellas de contenido, OID, RLS, políticas y ACL de las cinco tablas. Conservados: 74 libros, 9 tipos, 9 series, 70 originales importados y 1 administrador.
+- `public.dietas` mantiene 8 registros; la migración no contiene instrucciones de modificación sobre ella.
+- Data API con `Accept-Profile: Audiobiblioteca`: lectura correcta, 74 libros. El cliente selecciona el esquema para tablas, RPC y originales; Auth y Storage conservan sus rutas.
+- Prueba SQL con `ROLLBACK`: anónimo lee libros, no lee originales ni escribe; autenticado no administrador no ve originales ni guarda por RPC o escritura directa; administrador ve originales y crea/edita mediante RPC v2 con género y serie nuevos, resumen, reseña, estrellas y ruta de portada. Trigger `updated_at`, control CONFLICT y RPC anterior correctos. No quedan datos de prueba.
+- Políticas Storage siguen resolviendo `"Audiobiblioteca".audiolibroteca_is_admin()` por identidad de función; se conservan bucket y lectura pública.
+- 16 pruebas automatizadas y compilación de producción correctas con Node 22. La nueva prueba intercepta seis consultas/RPC y comprueba Accept-Profile/Content-Profile y la URL pública de Storage.
+- GitHub Actions: comprobaciones y publicación correctas.
+- Chromium sobre GitHub Pages: 74 fichas, búsqueda de Cleopatra y apertura de ficha, nueve agrupaciones de serie y apertura de libro, combinación de estado/valoración, limpieza de filtros, orden por autor, formulario de administración, búsqueda sin resultados y recuperación tras fallo de conexión. Todas las consultas observadas envían `Accept-Profile: Audiobiblioteca`; sin errores JavaScript. Capturas a 1440 y 375 px, sin desbordamiento horizontal en móvil.
+- Verificación final en SQL: 74 libros, cero registros de prueba en libros/tipos/series y cero tablas `audiolibroteca_` en `public`.
+- No se inicia sesión con la cuenta real del propietario ni se sube una portada real; la prueba de administración usa el rol autenticado y las claims del administrador en SQL dentro de una transacción revertida.
+
 ## Versión 1.3.1
 
 - 15 pruebas unitarias.
