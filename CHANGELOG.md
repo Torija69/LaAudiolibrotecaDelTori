@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1 · 2026-10-25
+
+- Corrige la subida de portadas desde iPhone/iPad: Safari no codifica WebP desde canvas y devolvía PNG, que se rechazaba. Ahora, si el navegador no genera WebP, la portada se guarda en JPEG. Migración 04: el bucket admite image/jpeg y cover_path acepta .jpg.
+- Lectura de imagen con alternativa mediante <img> si createImageBitmap falla.
+- El error de portada se muestra junto a la portada, no al final del formulario.
+
 ## 1.3.0 · 2026-10-24
 
 - Portada grande y cuadrada en la parte superior de cada tarjeta de la cuadrícula; icono de libro sobre fondo verde cuando no hay portada.

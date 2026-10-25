@@ -49,3 +49,7 @@ Se ha usado el nivel Alto elegido por el propietario para la implementación y r
 
 - A petición del propietario, la portada pasa a ocupar el ancho de la tarjeta en formato cuadrado, porque todas las portadas de audiolibro son cuadradas y la miniatura vertical las recortaba.
 - Se retira «Orden del Excel». El orden por defecto es título A–Z, ignorando signos. `source_number` se mantiene para la trazabilidad.
+
+## 2026-10-25 · JPEG como alternativa en iOS (v1.3.1)
+
+- Safari en iOS no codifica WebP desde canvas. Con aprobación expresa del propietario se aplicó la migración 04: el bucket admite JPEG y `cover_path` acepta `.jpg`. Se descartó un codificador WebP en WASM porque obligaba a relajar la CSP y aumentaba el peso de la web.

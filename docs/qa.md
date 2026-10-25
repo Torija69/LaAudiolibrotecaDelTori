@@ -1,5 +1,12 @@
 # Comprobaciones
 
+## Versión 1.3.1
+
+- 15 pruebas unitarias.
+- Chromium simulando Safari (toBlob WebP devuelve PNG): foto 4032 × 3024 de 1,6 MB pasa a JPEG 600 × 450 de 136 KB; en Chromium normal sale WebP de 94 KB. Archivo no legible: mensaje claro.
+- Base real tras la migración 04: bucket con image/webp e image/jpeg, restricción de cover_path con webp|jpg, Dieta con 8 filas sin cambios.
+- WebKit no se puede instalar en el entorno de pruebas; pendiente la prueba real del propietario desde el iPhone.
+
 ## Versión 1.3.0
 
 - 15 pruebas unitarias, incluido el orden por defecto por título ignorando signos.
