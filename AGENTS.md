@@ -7,6 +7,7 @@ Leer README, docs/spec.md, docs/decisiones.md y CHANGELOG. Consultar el catálog
 ## Seguridad y datos
 
 - Solo modificar tablas con prefijo `audiolibroteca_`.
+- Desde v1.3.2, todas las tablas y funciones de esta aplicación pertenecen al esquema exacto `"Audiobiblioteca"`. No crear tablas ni alias en `public`. La migración 05 fue una excepción de traslado expresamente autorizada; no reescribir las migraciones históricas.
 - Leer el esquema real antes de migrar. Cambios aditivos; no destruir, renombrar ni truncar.
 - Nunca usar `service_role`, secretos, contraseñas o sesiones en el frontend.
 - Una clave publicable no sustituye RLS. Pruebas obligatorias para anónimo, autenticado no administrador y administrador.

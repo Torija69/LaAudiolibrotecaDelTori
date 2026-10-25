@@ -2,7 +2,7 @@
 
 Catálogo personal de audiolibros con consulta pública y administración privada. Diseño Torija, variante Taller, con pequeños iconos de libros y fuentes locales Cabinet Grotesk y Satoshi.
 
-- **Versión:** 1.3.1, 24 de octubre de 2026.
+- **Versión:** 1.3.2, 25 de octubre de 2026.
 - **Web:** https://torija69.github.io/LaAudiolibrotecaDelTori/
 - **Patrón:** web estática con Supabase.
 - **Código público:** autorización expresa del propietario para publicar código y GitHub Pages.
@@ -43,7 +43,9 @@ npm run check
 
 ## Supabase y seguridad
 
-La aplicación usa tablas nuevas con prefijo `audiolibroteca_` en el proyecto existente del propietario. No modifica la tabla de dieta, usuarios, contraseñas ni configuración global de autenticación.
+La aplicación usa cinco tablas con prefijo `audiolibroteca_` en el esquema propio `"Audiobiblioteca"` del proyecto existente. El nombre distingue mayúsculas: en SQL debe escribirse entre comillas dobles. Las cuatro funciones de la aplicación también residen allí. No modifica la tabla de dieta, usuarios, contraseñas ni configuración global de autenticación.
+
+La migración 05 traslada los objetos existentes, sin copiar ni reimportar filas, y comprueba contenido, OID, permisos y RLS en la misma transacción. La API expone `public` y `Audiobiblioteca`; el cliente selecciona explícitamente este último para tablas y RPC. Tras el despliegue hay que recargar las pestañas antiguas: no se mantienen tablas ni alias de la aplicación en `public`.
 
 - La clave `sb_publishable_…` es publicable, no una credencial administrativa.
 - RLS permite SELECT público de fichas, tipos y series.

@@ -26,6 +26,8 @@ LaAudiolibrotecaDelTori conserva una colección de audiolibros escuchados, consu
 
 ## Modelo de datos
 
+Todas las tablas y funciones siguientes residen en el esquema exacto `"Audiobiblioteca"` desde v1.3.2. `public` no contiene tablas de esta aplicación y sigue disponible para otras aplicaciones.
+
 - `audiolibroteca_books` (v1.1.0 añade `summary`, `review`, `rating` y `cover_path`): título, créditos, tipo, serie y orden, etiqueta, estado, plataforma, notas públicas, marca de revisión, fuentes de metadatos, número de Excel y fechas técnicas.
 - `audiolibroteca_genres`: tipos editables mediante alta de fichas.
 - `audiolibroteca_series`: series y URL de referencia.

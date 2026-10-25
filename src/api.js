@@ -3,7 +3,10 @@ import {createClient} from '@supabase/supabase-js';
 export const supabase = createClient(
   'https://ymkojmxilsitilfpmfxc.supabase.co',
   'sb_publishable_L7C8CWIcKhlDjUkLuT6yJg__RVvJ18w',
-  {auth: {persistSession: false, autoRefreshToken: true, detectSessionInUrl: false}}
+  {
+    db: {schema: 'Audiobiblioteca'},
+    auth: {persistSession: false, autoRefreshToken: true, detectSessionInUrl: false}
+  }
 );
 async function allRows(table, select, order) {
   const rows = [];

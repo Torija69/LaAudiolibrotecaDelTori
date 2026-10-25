@@ -1,5 +1,11 @@
 # Decisiones
 
+## 2026-10-25 · Esquema propio (v1.3.2)
+
+El propietario solicita y autoriza el traslado de las cinco tablas desde `public` al esquema exacto `"Audiobiblioteca"`, la adaptación y las pruebas de la aplicación y su publicación en GitHub Pages. Se trasladan también las cuatro funciones, conservando sus OID para no romper las dependencias de RLS, triggers y Storage, y se actualizan las referencias SQL de sus cuerpos. No se crean copias ni vistas de compatibilidad en `public`; las pestañas anteriores requieren recarga.
+
+Se preservan los privilegios existentes y se concede únicamente USAGE sobre el nuevo esquema. La exposición de la API se amplía de `public` (valor comprobado antes de migrar) a `public, Audiobiblioteca`, manteniendo Dieta. Auth no cambia. La transacción verifica igualdad de contenido, filas, OID, RLS, políticas y ACL antes de confirmar.
+
 ## Arquitectura
 
 Frontend estático Vite y JavaScript, Supabase para persistencia y autenticación, GitHub Pages para alojamiento. No se incorpora un servidor de aplicación cuando las operaciones caben en una RPC con RLS; reduce piezas y evita depender de conectores de desarrollo en producción.

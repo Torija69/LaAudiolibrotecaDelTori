@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.2 · 2026-10-25
+
+- Cinco tablas y cuatro funciones trasladadas al esquema propio `"Audiobiblioteca"`, con los datos, permisos y dependencias conservados.
+- Cliente Supabase configurado explícitamente para consultas y RPC en ese esquema; Auth y Storage conservan sus rutas.
+- API ampliada al nuevo esquema sin retirar `public`, utilizado por Dieta.
+- Preparador de importación actualizado y prueba de regresión de cabeceras de esquema. Recargar las pestañas antiguas tras la migración.
+
 ## 1.3.1 · 2026-10-25
 
 - Corrige la subida de portadas desde iPhone/iPad: Safari no codifica WebP desde canvas y devolvía PNG, que se rechazaba. Ahora, si el navegador no genera WebP, la portada se guarda en JPEG. Migración 04: el bucket admite image/jpeg y cover_path acepta .jpg.
