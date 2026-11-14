@@ -74,3 +74,9 @@ Se ha usado el nivel Alto elegido por el propietario para la implementación y r
 - Bucket aparte (`audiolibroteca-infografias`, 3 MB, WebP/JPEG) para no mezclar límites ni políticas con las portadas (1 MB).
 - Borrar elimina primero la fila (RLS) y después el fichero; si el fichero fallara, queda huérfano pero invisible. Solo el propietario borra, con confirmación por imagen.
 - La migración es solo aditiva: no toca tablas existentes, Dieta ni otros buckets.
+
+## 2026-11-14 · Galería de infografías (v1.5.0)
+
+- Petición del propietario: que las infografías se vean «igual que los audiolibros» y que lleven al libro. Se añade una tercera vista con tarjetas del mismo estilo; la tarjeta abre la ficha (no la vista ampliada), colocada en la galería del libro.
+- La galería pública sigue la regla de la v1.4.0 (elegida o, si no hay, todas las candidatas) para no enseñar descartes.
+- Borrar también desde la vista ampliada, con la misma confirmación por imagen; no hay borrado múltiple.

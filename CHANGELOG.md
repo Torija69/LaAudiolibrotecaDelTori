@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0 · 2026-11-14
+
+- Nueva vista «Infografías» en la navegación (y tercer botón de vista): galería con una tarjeta por infografía, igual que las de los audiolibros, con portada de la imagen, tipo, título y autoría. Respeta la búsqueda, el orden y los filtros del catálogo. El público ve la elegida de cada libro (o todas las candidatas si no hay elegida); el administrador ve todas y la marca «Elegida».
+- Pulsar una infografía de la galería abre la ficha de su libro, colocada directamente en la sección de infografías.
+- Borrar desde la vista ampliada (solo administrador), con confirmación; tras borrar se pasa a la siguiente imagen y la ficha se actualiza. En móvil, anterior/siguiente quedan como flechas para dejar sitio a «Borrar».
+- Sin cambios en la base de datos.
+
 ## 1.4.0 · 2026-11-14
 
 - Galería de infografías en la ficha de cada libro. El público ve la infografía elegida; si aún no hay elegida, ve todas las candidatas en su orden. Cada imagen se amplía en una vista con anterior/siguiente (también con las flechas del teclado) y enlace al tamaño original.

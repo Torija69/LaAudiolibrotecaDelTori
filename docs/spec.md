@@ -19,7 +19,7 @@ LaAudiolibrotecaDelTori conserva una colección de audiolibros escuchados, consu
 | Validación | Obligatorios, límites de longitud, número no negativo, duplicado exacto |
 | Concurrencia | No sobrescribir silenciosamente una ficha que cambió desde su apertura |
 | Portada, resumen y reseña | Imagen opcional por ficha (subir, cambiar, quitar); resumen y reseña públicos de hasta 5000 caracteres |
-| Infografías | Galería por ficha: elegida o, si no hay, todas las candidatas; vista ampliada; filtro con/sin; el administrador elige una, reordena, borra y añade (v1.4.0) |
+| Infografías | Galería por ficha: elegida o, si no hay, todas las candidatas; vista ampliada; filtro con/sin; el administrador elige una, reordena, borra y añade (v1.4.0). Vista «Infografías»: galería de tarjetas que abren la ficha del libro; borrar desde la vista ampliada (v1.5.0) |
 | Valoración | 1 a 5 estrellas o sin valorar; visible en tarjeta y ficha; orden «Mejor valorados» |
 | Error | Mensaje y reintento al fallar la carga; no datos ficticios de sustitución |
 | Infraestructura | Repositorio público autorizado, GitHub Pages, Supabase existente aislado por tablas y RLS |

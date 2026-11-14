@@ -27,6 +27,11 @@
 - Verificar GitHub Pages publicado y vista previa en contexto nuevo.
 - Las pestañas antiguas deben recargarse tras la migración; no hay alias en public.
 
+## Galería de infografías (v1.5.0)
+- Navegación → Infografías: tarjetas con la imagen, el libro y «Ver el libro»; búsqueda, orden y filtros aplicados.
+- Pulsar una tarjeta abre la ficha del libro en su sección de infografías.
+- Administrador: ampliar una infografía → Borrar → confirmar; pasa a la siguiente y la ficha se actualiza.
+
 ## Infografías (v1.4.0)
 - Más filtros → Infografía: con / sin.
 - Ficha con candidatas: se ven todas; con elegida: solo esa.

@@ -1,7 +1,7 @@
 import './style.css';
 import {createIcons, BookOpen, LibraryBig, Library, LockKeyhole, Search, SlidersHorizontal, LayoutGrid, Plus, X, ArrowRight, ArrowUpRight, BookMarked, BookKey, Eye, Check, Pencil, LogOut, RefreshCw, Headphones, ChevronRight, AlertCircle, ImagePlus, Trash2, Star, Images, ChevronLeft, ArrowUp, ArrowDown, BadgeCheck, Maximize2} from 'lucide';
 import {supabase,loadCatalogue,isAdmin,saveBook,humanError,coverURL,prepareCover,uploadCover,removeCover,infographicURL,prepareInfographic,addInfographic,chooseInfographic,moveInfographic,deleteInfographic} from './api.js';
-import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook,starsLabel,visibleInfographics} from './domain.js';
+import {escapeHTML as e,fold,safeURL,selectBooks,orderedSeries,validateBook,starsLabel,visibleInfographics,galleryItems} from './domain.js';
 
 const $ = s => document.querySelector(s);
 const icons = () => createIcons({icons:{BookOpen,LibraryBig,Library,LockKeyhole,Search,SlidersHorizontal,LayoutGrid,Plus,X,ArrowRight,ArrowUpRight,BookMarked,BookKey,Eye,Check,Pencil,LogOut,RefreshCw,Headphones,ChevronRight,AlertCircle,ImagePlus,Trash2,Star,Images,ChevronLeft,ArrowUp,ArrowDown,BadgeCheck,Maximize2},attrs:{'aria-hidden':'true','stroke-width':1.6}});
@@ -68,7 +68,16 @@ function card(book) {
     <div class="card-bottom"><span class="status-dot ${book.status==='Escuchado'?'done':''}"></span>${e(book.status)}${stars(book.rating,'small')}${book.infografias?.length?`<span class="card-infographic" title="Con infografía" aria-label="Con infografía">${icon('images')}</span>`:''}<span class="card-arrow">${icon('arrow-up-right')}</span></div>
   </button>`;
 }
+function infographicCard({book,item}) {
+  return `<button class="book-card infographic-card" data-book="${e(book.id)}" data-focus="infographics" aria-label="Infografía de ${e(book.title)}: ver la ficha del libro">
+    <div class="infographic-card-frame"><img src="${e(infographicURL(item.path))}" alt="Infografía de ${e(book.title)}" loading="lazy" decoding="async">${state.admin&&item.elegida?`<span class="chosen-badge">${icon('badge-check')}Elegida</span>`:''}</div>
+    <div class="card-top"><span class="type-label">${e(book.genre?.name || 'Sin clasificar')}</span></div>
+    <div class="card-body"><h3>${e(book.title)}</h3><p class="credits">${e(book.credits || 'Créditos por completar')}</p></div>
+    <div class="card-bottom">${icon('book-open')}<span>Ver el libro</span><span class="card-arrow">${icon('arrow-up-right')}</span></div>
+  </button>`;
+}
 function render() {
+  if(state.view==='infographics') return renderGallery();
   const books=selectBooks(state.books,state.filters);
   $('#catalogue-heading').textContent=state.view==='books'?'En la estantería':'Historias que continúan';
   $('#result-count').textContent=`${books.length} ${books.length===1?'audiolibro':'audiolibros'}${books.length!==state.books.length?` de ${state.books.length}`:''}${state.view==='series'?' · agrupados por serie':''}`;
@@ -90,6 +99,23 @@ function render() {
     const alone=books.filter(b=>!b.series_id);
     if(alone.length) results.innerHTML+=`<section class="unassigned"><h3>Sin serie asignada <span>${alone.length}</span></h3><p class="muted">No implica que sean títulos independientes: la colección aún puede completarse.</p><div class="book-grid">${alone.map(card).join('')}</div></section>`;
   }
+  icons();
+}
+function syncViewButtons() {
+  document.querySelectorAll('[data-view]').forEach(btn=>{btn.classList.toggle('active',btn.dataset.view===state.view);btn.setAttribute('aria-pressed',String(btn.dataset.view===state.view));});
+}
+function renderGallery() {
+  const items=galleryItems(state.books,state.filters,state.admin);
+  const books=new Set(items.map(i=>i.book.id)).size;
+  $('#catalogue-heading').textContent='Galería de infografías';
+  $('#result-count').textContent=`${items.length} ${items.length===1?'infografía':'infografías'} de ${books} ${books===1?'libro':'libros'}`;
+  syncViewButtons();
+  const results=$('#results');
+  results.setAttribute('aria-busy','false');
+  if(!items.length) {
+    results.className='empty-state';
+    results.innerHTML=`${icon('images')}<h3>No hay infografías con estos filtros.</h3><p>Prueba otro título o quita algún filtro.</p><button class="button secondary" data-reset>Ver toda la colección</button>`;
+  } else { results.className='book-grid infographic-gallery'; results.innerHTML=items.map(infographicCard).join(''); }
   icons();
 }
 async function refresh() {
@@ -125,7 +151,10 @@ $('#toggle-filters').addEventListener('click',()=>{
 });
 $('#results').addEventListener('click',event=>{
   const book=event.target.closest('[data-book]');
-  if(book) openDetail(state.books.find(b=>b.id===book.dataset.book));
+  if(book) {
+    openDetail(state.books.find(b=>b.id===book.dataset.book));
+    if(book.dataset.focus==='infographics') requestAnimationFrame(()=>$('#detail-dialog .infographics')?.scrollIntoView({block:'start'}));
+  }
   if(event.target.closest('[data-reset]')) resetFilters();
   if(event.target.closest('[data-retry]')) refresh();
 });
@@ -278,12 +307,39 @@ function bindInfographics(book,dialog) {
 }
 function openImage(book,items,index) {
   const dialog=$('#image-dialog');
+  let busy=false;
   const draw=()=>{
     const item=items[index];
-    dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">${e(book.title)}${items.length>1?` · ${index+1} de ${items.length}`:''}</span><button class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><div class="image-stage"><img src="${e(infographicURL(item.path))}" alt="Infografía de ${e(book.title)}${items.length>1?` (${index+1} de ${items.length})`:''}"></div>${items.length>1?`<div class="image-nav"><button class="button secondary" data-step="-1" ${index===0?'disabled':''}>${icon('chevron-left')}Anterior</button><a class="button quiet" href="${e(infographicURL(item.path))}" target="_blank" rel="noopener noreferrer">${icon('arrow-up-right')}Tamaño original</a><button class="button secondary" data-step="1" ${index===items.length-1?'disabled':''}>Siguiente${icon('chevron-right')}</button></div>`:`<div class="image-nav single"><a class="button quiet" href="${e(infographicURL(item.path))}" target="_blank" rel="noopener noreferrer">${icon('arrow-up-right')}Tamaño original</a></div>`}`;
+    const original=`<a class="button quiet" href="${e(infographicURL(item.path))}" target="_blank" rel="noopener noreferrer">${icon('arrow-up-right')}Tamaño original</a>`;
+    const toBook=$('#detail-dialog').open?'':`<button class="button secondary" data-to-book>${icon('book-open')}Ver el libro</button>`;
+    const remove=state.admin?`<button class="button secondary danger-button" data-remove>${icon('trash-2')}Borrar</button>`:'';
+    const middle=`<div class="image-actions">${original}${toBook}${remove}</div>`;
+    dialog.innerHTML=`<div class="dialog-top"><span class="eyebrow">${e(book.title)}${items.length>1?` · ${index+1} de ${items.length}`:''}</span><button class="icon-button" data-close aria-label="Cerrar">${icon('x')}</button></div><div class="image-stage"><img src="${e(infographicURL(item.path))}" alt="Infografía de ${e(book.title)}${items.length>1?` (${index+1} de ${items.length})`:''}"></div><div class="image-nav ${items.length>1?'':'single'}">${items.length>1?`<button class="button secondary" data-step="-1" ${index===0?'disabled':''} aria-label="Anterior">${icon('chevron-left')}<span class="nav-label">Anterior</span></button>`:''}${middle}${items.length>1?`<button class="button secondary" data-step="1" ${index===items.length-1?'disabled':''} aria-label="Siguiente"><span class="nav-label">Siguiente</span>${icon('chevron-right')}</button>`:''}</div><p class="form-error" id="image-error" role="alert"></p>`;
     icons();
   };
-  dialog.onclick=event=>{const step=event.target.closest('[data-step]');if(step){index=Math.max(0,Math.min(items.length-1,index+Number(step.dataset.step)));draw();}};
+  const removeCurrent=async()=>{
+    if(busy||!state.admin) return;
+    if(!confirm('¿Borrar esta infografía? Se eliminará la imagen y no se puede deshacer.')) return;
+    busy=true;dialog.classList.add('busy');
+    try{
+      await deleteInfographic(items[index]);
+      await refresh();
+      const updated=state.books.find(b=>b.id===book.id);
+      if(updated){book=updated;}
+      items=visibleInfographics(book,state.admin);
+      if($('#detail-dialog').open) openDetail(book);
+      toast('Infografía borrada.');
+      if(!items.length){dialog.close();return;}
+      index=Math.min(index,items.length-1);draw();
+    }catch(error){const p=$('#image-error');if(p)p.textContent=humanError(error);}
+    finally{busy=false;dialog.classList.remove('busy');}
+  };
+  dialog.onclick=event=>{
+    const step=event.target.closest('[data-step]');
+    if(step){index=Math.max(0,Math.min(items.length-1,index+Number(step.dataset.step)));draw();return;}
+    if(event.target.closest('[data-remove]')){removeCurrent();return;}
+    if(event.target.closest('[data-to-book]')){dialog.close();openDetail(book);requestAnimationFrame(()=>$('#detail-dialog .infographics')?.scrollIntoView({block:'start'}));}
+  };
   dialog.onkeydown=event=>{if(event.key==='ArrowRight'&&index<items.length-1){index++;draw();}if(event.key==='ArrowLeft'&&index>0){index--;draw();}};
   draw();dialog.showModal();
 }
