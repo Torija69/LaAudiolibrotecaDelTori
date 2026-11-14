@@ -1,5 +1,13 @@
 # Comprobaciones
 
+## Versión 1.4.0
+
+- Migración 06 aplicada con aprobación del propietario. Prueba SQL en transacción: anónimo lee y no inserta (42501); autenticado no administrador no inserta en la tabla ni en el bucket (42501); administrador inserta, actualiza y borra; segunda elegida del mismo libro bloqueada por el índice único; ruta no UUID rechazada. Sin datos de prueba residuales.
+- Carga inicial: 54 filas y 54 objetos (30,3 MB) en 5 libros, ninguna elegida.
+- 18 pruebas automatizadas y compilación de producción correctas con Node 22: filtro con/sin infografía, regla elegida/candidatas, consulta de la tabla con Accept-Profile Audiobiblioteca y URL pública del bucket.
+- Chromium con datos reales, 1440 px y 375 px: filtro «Con infografía» (5 de 77), ficha de Cleopatra con 24 candidatas, vista ampliada con flechas (2 de 24), ficha de Momo a 375 px sin desbordamiento (scrollWidth 375), sin errores JavaScript.
+- Vista de administración simulada interceptando el inicio de sesión y `audiolibroteca_is_admin` en el navegador: herramientas Elegir/Quitar, reordenar y borrar en una sola línea a 1440 y 375 px. Las escrituras reales están cubiertas por la prueba SQL; queda pendiente la prueba del propietario con su cuenta (elegir, borrar y subir desde el iPhone).
+
 ## Versión 1.3.2
 
 - Migración aplicada: cinco tablas y cuatro funciones en `"Audiobiblioteca"`; ninguna tabla de la aplicación permanece en `public`.

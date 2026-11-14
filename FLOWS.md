@@ -26,3 +26,11 @@
 - Dieta permanece en public y sus objetos no se modifican.
 - Verificar GitHub Pages publicado y vista previa en contexto nuevo.
 - Las pestañas antiguas deben recargarse tras la migración; no hay alias en public.
+
+## Infografías (v1.4.0)
+- Más filtros → Infografía: con / sin.
+- Ficha con candidatas: se ven todas; con elegida: solo esa.
+- Ampliar, anterior/siguiente, flechas del teclado, tamaño original y cerrar.
+- Administrador: elegir y quitar (una por libro), mover, borrar con confirmación y añadir una imagen.
+- Comprobar 375 px sin desbordamiento y RLS en SQL con ROLLBACK.
+

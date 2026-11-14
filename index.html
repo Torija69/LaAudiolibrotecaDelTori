@@ -41,6 +41,7 @@
           <label>Serie<select id="series-filter"><option value="">Todas las series y títulos</option><option value="none">Sin serie asignada</option></select></label>
           <label>Estado<select id="status-filter"><option value="">Todos los estados</option><option>Escuchado</option><option>Escuchando</option><option>Pendiente</option></select></label>
           <label>Valoración<select id="rating-filter"><option value="">Todas las valoraciones</option><option value="unrated">Sin valorar</option><option value="rated">Valorados</option></select></label>
+          <label>Infografía<select id="infographic-filter"><option value="">Con y sin infografía</option><option value="with">Con infografía</option><option value="without">Sin infografía</option></select></label>
           <label id="review-filter-label" hidden>Revisión<select id="review-filter"><option value="">Todos los registros</option><option value="review">Datos por revisar</option><option value="unclassified">Sin clasificar</option></select></label>
           <button id="reset" class="button quiet">Limpiar filtros</button>
         </div>
@@ -49,7 +50,7 @@
       </section>
       <aside class="catalogue-note"><i data-lucide="book-marked" aria-hidden="true"></i><p>Una colección personal, no un servicio de reproducción. Aquí se guardan las fichas, no los archivos de audio. Los títulos sin tipo confirmado aparecen como «Sin clasificar».</p></aside>
     </main>
-    <footer><span>La audiolibroteca del Tori</span><span>Hecho para recordar lo escuchado.</span><span>Torija · v1.3.2</span></footer>
+    <footer><span>La audiolibroteca del Tori</span><span>Hecho para recordar lo escuchado.</span><span>Torija · v1.4.0</span></footer>
     <dialog id="detail-dialog" aria-labelledby="detail-heading"></dialog>
     <dialog id="login-dialog" aria-labelledby="login-heading">
       <div class="dialog-top"><span class="eyebrow">ACCESO PRIVADO</span><button type="button" class="icon-button" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>
@@ -57,6 +58,7 @@
       <form id="login-form"><label>Usuario (correo electrónico)<input name="email" type="email" required autocomplete="username" placeholder="tu@correo.com"></label><label>Contraseña<div class="password-field"><input name="password" type="password" required autocomplete="current-password" minlength="1"><button id="show-password" class="icon-button" type="button" aria-label="Mostrar contraseña"><i data-lucide="eye"></i></button></div></label><p id="login-error" class="form-error" role="alert"></p><button class="button primary full" type="submit">Entrar a la audiolibroteca<i data-lucide="arrow-right"></i></button></form><p class="fine-print">Sin registro público. La sesión se mantiene mientras esta página permanezca abierta. No se guardan contraseñas en el navegador.</p>
     </dialog>
     <dialog id="edit-dialog" aria-labelledby="edit-heading"></dialog>
+    <dialog id="image-dialog" class="image-dialog" aria-label="Infografía ampliada"></dialog>
     <div id="toast" role="status" aria-live="polite"></div>
     <script type="module" src="./src/main.js"></script>
   </body>

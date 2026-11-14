@@ -21,7 +21,9 @@ export async function loadCatalogue() {
   const books = await allRows('audiolibroteca_books','*','id');
   const genres = await allRows('audiolibroteca_genres','id,name','name');
   const series = await allRows('audiolibroteca_series','id,name,source_url','name');
-  return {books: books.map(b => ({...b, genre: genres.find(g=>g.id===b.genre_id),series:series.find(s=>s.id===b.series_id)})), genres, series};
+  const infographics = await allRows('audiolibroteca_infografias','id,book_id,path,origen,elegida,orden,created_at','orden');
+  return {books: books.map(b => ({...b, genre: genres.find(g=>g.id===b.genre_id),series:series.find(s=>s.id===b.series_id),
+    infografias: infographics.filter(i=>i.book_id===b.id).sort((x,y)=>x.orden-y.orden || x.created_at.localeCompare(y.created_at))})), genres, series};
 }
 export async function isAdmin() {
   const {data,error} = await supabase.rpc('audiolibroteca_is_admin');
@@ -79,6 +81,68 @@ export async function uploadCover(blob) {
 export async function removeCover(path) {
   if (path) await supabase.storage.from(COVER_BUCKET).remove([path]).catch(() => {});
 }
+// v1.4.0 · Infografías: bucket público de lectura, escritura solo de administradores (RLS).
+export const INFOGRAPHIC_BUCKET = 'audiolibroteca-infografias';
+export function infographicURL(path) {
+  if (!path || !/^[0-9a-f-]{36}\.(webp|jpg)$/.test(path)) return '';
+  return supabase.storage.from(INFOGRAPHIC_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+// Reduce a 2000 px y como mucho 3 MB; WebP o JPEG en Safari.
+export async function prepareInfographic(file) {
+  if (!file.type.startsWith('image/')) throw new Error('COVER_TYPE');
+  if (file.size > 25 * 1024 * 1024) throw new Error('INFOGRAPHIC_SIZE');
+  const bitmap = await decodeImage(file);
+  const scale = Math.min(1, 2000 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close?.();
+  const encode = (type, quality) => new Promise(resolve => canvas.toBlob(resolve, type, quality));
+  const LIMIT = 3 * 1024 * 1024;
+  let blob = null;
+  for (const quality of [0.86, 0.76, 0.62]) {
+    blob = await encode('image/webp', quality);
+    if (!blob || blob.type !== 'image/webp') { blob = null; break; }
+    if (blob.size <= LIMIT) break;
+  }
+  if (!blob) {
+    for (const quality of [0.86, 0.76, 0.62]) {
+      blob = await encode('image/jpeg', quality);
+      if (blob && blob.type === 'image/jpeg' && blob.size <= LIMIT) break;
+    }
+  }
+  if (!blob || !['image/webp', 'image/jpeg'].includes(blob.type)) throw new Error('COVER_TYPE');
+  if (blob.size > LIMIT) throw new Error('INFOGRAPHIC_SIZE');
+  return blob;
+}
+export async function addInfographic(bookId, blob, orden) {
+  const type = blob.type === 'image/jpeg' ? 'image/jpeg' : 'image/webp';
+  const path = `${crypto.randomUUID()}.${type === 'image/jpeg' ? 'jpg' : 'webp'}`;
+  const up = await supabase.storage.from(INFOGRAPHIC_BUCKET).upload(path, blob, {contentType:type, cacheControl:'31536000', upsert:false});
+  if (up.error) throw up.error;
+  const {error} = await supabase.from('audiolibroteca_infografias').insert({book_id:bookId, path, origen:'Subida manual', orden});
+  if (error) { await supabase.storage.from(INFOGRAPHIC_BUCKET).remove([path]).catch(() => {}); throw error; }
+  return path;
+}
+// Solo una elegida por libro (índice único parcial): primero se libera la anterior.
+export async function chooseInfographic(item) {
+  const clear = await supabase.from('audiolibroteca_infografias').update({elegida:false}).eq('book_id', item.book_id).eq('elegida', true);
+  if (clear.error) throw clear.error;
+  if (item.elegida) return;
+  const {error} = await supabase.from('audiolibroteca_infografias').update({elegida:true}).eq('id', item.id);
+  if (error) throw error;
+}
+export async function moveInfographic(a, b) {
+  for (const [item, orden] of [[a, b.orden === a.orden ? a.orden + 1 : b.orden], [b, a.orden]]) {
+    const {error} = await supabase.from('audiolibroteca_infografias').update({orden}).eq('id', item.id);
+    if (error) throw error;
+  }
+}
+export async function deleteInfographic(item) {
+  const {error} = await supabase.from('audiolibroteca_infografias').delete().eq('id', item.id);
+  if (error) throw error;
+  await supabase.storage.from(INFOGRAPHIC_BUCKET).remove([item.path]).catch(() => {});
+}
 export async function saveBook(input, existing) {
   const {data,error} = await supabase.rpc('audiolibroteca_save_book_v2', {
     p_id: existing?.id || null,
@@ -103,6 +167,7 @@ export async function saveBook(input, existing) {
 }
 export function humanError(error) {
   if (error?.message === 'COVER_TYPE') return 'No se ha podido leer la imagen. Prueba con una foto JPG, PNG, WebP o HEIC.';
+  if (error?.message === 'INFOGRAPHIC_SIZE') return 'La infografía es demasiado grande. Prueba con otra imagen de menos de 25 MB.';
   if (error?.message === 'COVER_SIZE') return 'La imagen es demasiado grande. Prueba con otra de menos de 15 MB.';
   if (error?.code === '23505') return 'Ya existe un audiolibro con ese título, créditos y plataforma. Revisa el registro existente.';
   if (error?.message?.includes('CONFLICT')) return 'Este audiolibro ha cambiado desde que lo abriste. Cierra la ficha, actualiza la página y revisa los cambios antes de guardar.';

@@ -19,6 +19,7 @@ LaAudiolibrotecaDelTori conserva una colección de audiolibros escuchados, consu
 | Validación | Obligatorios, límites de longitud, número no negativo, duplicado exacto |
 | Concurrencia | No sobrescribir silenciosamente una ficha que cambió desde su apertura |
 | Portada, resumen y reseña | Imagen opcional por ficha (subir, cambiar, quitar); resumen y reseña públicos de hasta 5000 caracteres |
+| Infografías | Galería por ficha: elegida o, si no hay, todas las candidatas; vista ampliada; filtro con/sin; el administrador elige una, reordena, borra y añade (v1.4.0) |
 | Valoración | 1 a 5 estrellas o sin valorar; visible en tarjeta y ficha; orden «Mejor valorados» |
 | Error | Mensaje y reintento al fallar la carga; no datos ficticios de sustitución |
 | Infraestructura | Repositorio público autorizado, GitHub Pages, Supabase existente aislado por tablas y RLS |
@@ -31,6 +32,7 @@ Todas las tablas y funciones siguientes residen en el esquema exacto `"Audiobibl
 - `audiolibroteca_books` (v1.1.0 añade `summary`, `review`, `rating` y `cover_path`): título, créditos, tipo, serie y orden, etiqueta, estado, plataforma, notas públicas, marca de revisión, fuentes de metadatos, número de Excel y fechas técnicas.
 - `audiolibroteca_genres`: tipos editables mediante alta de fichas.
 - `audiolibroteca_series`: series y URL de referencia.
+- `audiolibroteca_infografias` (v1.4.0): libro, ruta UUID en el bucket `audiolibroteca-infografias`, origen, `elegida` (una como mucho por libro), orden y fecha técnica.
 - `audiolibroteca_admins`: lista de usuarios autorizados, sin permisos API de autoalta.
 - `audiolibroteca_imports`: literales y fila original, con observaciones privadas de importación.
 

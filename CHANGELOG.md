@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.0 · 2026-11-14
+
+- Galería de infografías en la ficha de cada libro. El público ve la infografía elegida; si aún no hay elegida, ve todas las candidatas en su orden. Cada imagen se amplía en una vista con anterior/siguiente (también con las flechas del teclado) y enlace al tamaño original.
+- Administración en la misma ficha: elegir o quitar la elegida (como mucho una por libro), reordenar, borrar con confirmación (borra fila e imagen) y añadir nuevas imágenes, que se reducen a 2000 px y 3 MB en WebP (JPEG en iPhone).
+- Nuevo filtro «Infografía» en Más filtros (con / sin) y pequeño icono en las tarjetas que tienen infografía.
+- Migración 06: tabla `"Audiobiblioteca".audiolibroteca_infografias` con RLS (lectura pública, escritura solo administradores), índice único de una elegida por libro y bucket público `audiolibroteca-infografias` (WebP/JPEG, 3 MB) con escritura y borrado solo de administradores.
+
 ## 1.3.2 · 2026-10-25
 
 - Cinco tablas y cuatro funciones trasladadas al esquema propio `"Audiobiblioteca"`, con los datos, permisos y dependencias conservados.
