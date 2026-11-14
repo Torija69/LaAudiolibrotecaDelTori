@@ -9,6 +9,7 @@ export function selectBooks(books, filters) {
     (!filters.series || (filters.series === 'none' ? !b.series_id : b.series_id === filters.series)) &&
     (!filters.status || b.status === filters.status) &&
     (!filters.rating || (filters.rating === 'unrated' ? !b.rating : !!b.rating)) &&
+    (!filters.infographic || (filters.infographic === 'with' ? (b.infografias?.length > 0) : !(b.infografias?.length > 0))) &&
     (!filters.review || (filters.review === 'review' ? b.needs_review : b.genre?.name === 'Sin clasificar'))
   );
   const collator = new Intl.Collator('es', {sensitivity:'base', numeric:true, ignorePunctuation:true});
@@ -36,3 +37,10 @@ export function validateBook(book) {
   return '';
 }
 export const starsLabel = rating => rating ? `${rating} de 5 estrellas` : 'Sin valorar';
+// Público: solo la elegida si la hay; si no, todas las candidatas en su orden.
+export function visibleInfographics(book, admin = false) {
+  const all = [...(book?.infografias || [])].sort((a,b) => a.orden - b.orden);
+  if (admin) return all;
+  const chosen = all.find(i => i.elegida);
+  return chosen ? [chosen] : all;
+}

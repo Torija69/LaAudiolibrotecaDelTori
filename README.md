@@ -2,7 +2,7 @@
 
 Catálogo personal de audiolibros con consulta pública y administración privada. Diseño Torija, variante Taller, con pequeños iconos de libros y fuentes locales Cabinet Grotesk y Satoshi.
 
-- **Versión:** 1.3.2, 25 de octubre de 2026.
+- **Versión:** 1.4.0, 14 de noviembre de 2026.
 - **Web:** https://torija69.github.io/LaAudiolibrotecaDelTori/
 - **Patrón:** web estática con Supabase.
 - **Código público:** autorización expresa del propietario para publicar código y GitHub Pages.
@@ -14,6 +14,7 @@ Catálogo personal de audiolibros con consulta pública y administración privad
 - Consultar fichas y ver las series en orden, con precuelas diferenciadas.
 - Ver la portada, el resumen, la reseña personal y la valoración de 1 a 5 estrellas de cada libro; ordenar por mejor valorados.
 - Subir, cambiar o quitar portadas desde el formulario de administración.
+- Ver las infografías de cada libro y ampliarlas; filtrar los libros con o sin infografía. El administrador elige una por libro, reordena, borra y añade nuevas desde la ficha.
 - Entrar con correo y contraseña de Supabase para añadir y editar.
 - Crear tipos y series desde el mismo formulario, en una transacción.
 - Consultar el original del Excel y las observaciones de importación solo como administrador.
@@ -54,6 +55,7 @@ La migración 05 traslada los objetos existentes, sin copiar ni reimportar filas
 - Los originales del Excel solo se consultan con una sesión administradora.
 - La RPC de guardado es `SECURITY INVOKER` y aplica RLS y autorización.
 - Se escapan los valores en HTML y solo se aceptan enlaces HTTPS.
+- Las infografías están en el bucket público `audiolibroteca-infografias` (WebP o JPEG, 3 MB) y en la tabla `audiolibroteca_infografias`; escribir y borrar exige ser administrador.
 - Las portadas están en el bucket público `audiolibroteca-portadas` (solo WebP, 1 MB); subir y borrar exige ser administrador. El nombre del fichero es un UUID validado por la base de datos.
 - La sesión vive en memoria; se cierra al recargar o cerrar la página.
 - El Excel, datos de importación, correo e identificador del administrador y claves privadas no se incluyen en este repositorio.

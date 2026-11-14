@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {supabase, loadCatalogue, isAdmin, saveBook, coverURL} from '../src/api.js';
+import {supabase, loadCatalogue, isAdmin, saveBook, coverURL, infographicURL} from '../src/api.js';
 
 test('todas las tablas y RPC usan el esquema exacto Audiobiblioteca', async () => {
   const requests = [];
@@ -21,11 +21,15 @@ test('todas las tablas y RPC usan el esquema exacto Audiobiblioteca', async () =
       title:'Prueba',credits:'Autor',genre:'Novela',series:'',order:'',
       status:'Pendiente',platform:'',notes:'',needs_review:false
     });
-    assert.equal(requests.length, 6);
+    assert.equal(requests.length, 7);
     for (const request of requests) {
       const header = request.method === 'GET' ? 'Accept-Profile' : 'Content-Profile';
       assert.equal(request.headers.get(header), 'Audiobiblioteca', request.url);
     }
+    assert.ok(requests.some(r => r.url.includes('/audiolibroteca_infografias?')));
+    assert.match(infographicURL('00000000-0000-0000-0000-000000000000.webp'),
+      /\/storage\/v1\/object\/public\/audiolibroteca-infografias\//);
+    assert.equal(infographicURL('../secreto.png'), '');
     assert.match(coverURL('00000000-0000-0000-0000-000000000000.jpg'),
       /\/storage\/v1\/object\/public\/audiolibroteca-portadas\//);
   } finally {

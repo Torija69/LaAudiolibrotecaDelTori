@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook,starsLabel} from '../src/domain.js';
+import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook,starsLabel,visibleInfographics} from '../src/domain.js';
 const books=[
   {id:'a',title:'El día',credits:'Álvaro',genre_id:'g1',genre:{name:'Fantasía'},series_id:'s1',series:{name:'Serie Á'},series_order:2,source_number:1,created_at:'2026-01-01',status:'Escuchado',needs_review:false},
   {id:'b',title:'Otra',credits:'Beatriz',genre_id:'g2',genre:{name:'Sin clasificar'},series_id:null,series_order:null,source_number:2,created_at:'2026-01-02',status:'Pendiente',needs_review:true},
@@ -39,3 +39,17 @@ test('valida resumen, reseña y estrellas',()=>{
 
 test('filtra sin valorar y valorados',()=>{const r=[{id:'a',rating:4,title:'A',credits:'',created_at:''},{id:'b',rating:null,title:'B',credits:'',created_at:''},{id:'c',title:'C',credits:'',created_at:''}];assert.deepEqual(selectBooks(r,{rating:'unrated'}).map(b=>b.id).sort(),['b','c']);assert.deepEqual(selectBooks(r,{rating:'rated'}).map(b=>b.id),['a']);assert.equal(selectBooks(r,{}).length,3);});
 test('orden por defecto: título sin tener en cuenta paréntesis',()=>{const r=[{id:'z',title:'Zeta',credits:'',created_at:''},{id:'b',title:'(BlackWater I) La riada',credits:'',created_at:''},{id:'a',title:'Amagi',credits:'',created_at:''}];assert.deepEqual(selectBooks(r,{}).map(b=>b.id),['a','b','z']);});
+
+test('v1.4.0 filtra por infografía',()=>{
+  const withInf=[{...books[0],infografias:[{id:'i1',orden:10,elegida:false}]},{...books[1],infografias:[]},books[2]];
+  assert.deepEqual(selectBooks(withInf,{infographic:'with'}).map(b=>b.id),['a']);
+  assert.deepEqual(selectBooks(withInf,{infographic:'without'}).map(b=>b.id),['b','c']);
+});
+test('v1.4.0 el público ve la elegida o todas las candidatas en orden',()=>{
+  const cand={infografias:[{id:'x',orden:20,elegida:false},{id:'y',orden:10,elegida:false}]};
+  assert.deepEqual(visibleInfographics(cand).map(i=>i.id),['y','x']);
+  const chosen={infografias:[{id:'x',orden:20,elegida:true},{id:'y',orden:10,elegida:false}]};
+  assert.deepEqual(visibleInfographics(chosen).map(i=>i.id),['x']);
+  assert.deepEqual(visibleInfographics(chosen,true).map(i=>i.id),['y','x']);
+  assert.deepEqual(visibleInfographics({}),[]);
+});

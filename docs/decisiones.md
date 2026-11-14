@@ -44,6 +44,12 @@ La sesión se mantiene en memoria, sin cookies ni almacenamiento persistente. As
 
 Se ha usado el nivel Alto elegido por el propietario para la implementación y revisión. La aplicación no necesita un modelo de IA ni genera consumo de inferencia durante su uso normal.
 
+## 2026-11-14 · Carga inicial de infografías
+
+- 54 candidatas de 5 libros (Cleopatra 24, Fuego en el Misisipi 15, Un hombre de honor 7, Cuentos completos 7, Momo 1), procedentes de artefactos y chats de Perplexity y de la biblioteca de Leonardo. Ninguna se marca como elegida: la elección es del propietario.
+- Duplicados exactos entre Perplexity y Leonardo descartados por huella perceptiva; se conservó la versión de mayor resolución. Las versiones distintas de una misma infografía se conservan como candidatas.
+- Convertidas a WebP (máximo 2000 px, calidad 85, 30,3 MB en total) con nombre UUID. Subida con una Edge Function temporal protegida con secreto, sustituida después por una versión que responde 410. El registro de origen de cada imagen está fuera del repositorio.
+
 ## 2026-10-24 · Carga inicial de portadas y sinopsis
 
 - Se cargaron portadas y sinopsis de los 70 audiolibros desde Apple Books (64), Audible (5) y Storytel (1), en ediciones de audiolibro en español.
@@ -59,3 +65,12 @@ Se ha usado el nivel Alto elegido por el propietario para la implementación y r
 ## 2026-10-25 · JPEG como alternativa en iOS (v1.3.1)
 
 - Safari en iOS no codifica WebP desde canvas. Con aprobación expresa del propietario se aplicó la migración 04: el bucket admite JPEG y `cover_path` acepta `.jpg`. Se descartó un codificador WebP en WASM porque obligaba a relajar la CSP y aumentaba el peso de la web.
+
+## 2026-11-14 · Infografías por libro (v1.4.0)
+
+- Tabla `audiolibroteca_infografias` en `"Audiobiblioteca"`: se mantiene el prefijo `audiolibroteca_` que exige AGENTS.md, aunque la guía del infografista la llamaba `infografias`.
+- Una fila por imagen con `elegida` booleano y un índice único parcial: como mucho una elegida por libro, garantizado por la base de datos. Elegir libera primero la anterior.
+- Sin elegida, el público ve todas las candidatas para que la galería no quede vacía mientras el propietario decide. Con elegida, solo esa.
+- Bucket aparte (`audiolibroteca-infografias`, 3 MB, WebP/JPEG) para no mezclar límites ni políticas con las portadas (1 MB).
+- Borrar elimina primero la fila (RLS) y después el fichero; si el fichero fallara, queda huérfano pero invisible. Solo el propietario borra, con confirmación por imagen.
+- La migración es solo aditiva: no toca tablas existentes, Dieta ni otros buckets.
