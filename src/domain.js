@@ -44,3 +44,7 @@ export function visibleInfographics(book, admin = false) {
   const chosen = all.find(i => i.elegida);
   return chosen ? [chosen] : all;
 }
+// Galería: una tarjeta por infografía visible de los libros filtrados, en el orden del catálogo.
+export function galleryItems(books, filters, admin = false) {
+  return selectBooks(books, filters).flatMap(book => visibleInfographics(book, admin).map(item => ({book, item})));
+}

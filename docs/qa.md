@@ -1,5 +1,10 @@
 # Comprobaciones
 
+## Versión 1.5.0
+
+- 19 pruebas automatizadas (nueva: `galleryItems`, una tarjeta por infografía visible y orden del catálogo) y compilación correctas con Node 22.
+- Chromium con datos reales: vista «Infografías» pública con 55 tarjetas de 6 libros (un libro ya tiene elegida) y como administrador 64; pulsar una tarjeta abre la ficha en la sección de infografías; vista ampliada con «Borrar» a 1280 y 375 px; sin errores JavaScript. Administración simulada interceptando el inicio de sesión; el borrado real usa la misma función que la v1.4.0, ya cubierta por la prueba SQL.
+
 ## Versión 1.4.0
 
 - Migración 06 aplicada con aprobación del propietario. Prueba SQL en transacción: anónimo lee y no inserta (42501); autenticado no administrador no inserta en la tabla ni en el bucket (42501); administrador inserta, actualiza y borra; segunda elegida del mismo libro bloqueada por el índice único; ruta no UUID rechazada. Sin datos de prueba residuales.

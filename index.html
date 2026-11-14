@@ -20,6 +20,7 @@
         <nav aria-label="Navegación principal">
           <button class="nav-button active" data-view="books">Audiolibros</button>
           <button class="nav-button" data-view="series">Series</button>
+          <button class="nav-button" data-view="infographics">Infografías</button>
         </nav>
         <button id="account" class="account-button" aria-label="Administrar"><i data-lucide="lock-keyhole" aria-hidden="true"></i><span>Administrar</span></button>
       </div>
@@ -45,12 +46,12 @@
           <label id="review-filter-label" hidden>Revisión<select id="review-filter"><option value="">Todos los registros</option><option value="review">Datos por revisar</option><option value="unclassified">Sin clasificar</option></select></label>
           <button id="reset" class="button quiet">Limpiar filtros</button>
         </div>
-        <div class="results-header"><p id="result-count" role="status" aria-live="polite">Cargando la colección…</p><div class="view-toggle" aria-label="Vista del catálogo"><button data-view="books" class="active" aria-pressed="true" aria-label="Ver audiolibros"><i data-lucide="layout-grid"></i></button><button data-view="series" aria-pressed="false" aria-label="Agrupar por series"><i data-lucide="library"></i></button></div></div>
+        <div class="results-header"><p id="result-count" role="status" aria-live="polite">Cargando la colección…</p><div class="view-toggle" aria-label="Vista del catálogo"><button data-view="books" class="active" aria-pressed="true" aria-label="Ver audiolibros"><i data-lucide="layout-grid"></i></button><button data-view="series" aria-pressed="false" aria-label="Agrupar por series"><i data-lucide="library"></i></button><button data-view="infographics" aria-pressed="false" aria-label="Ver infografías"><i data-lucide="images"></i></button></div></div>
         <div id="results" class="book-grid" aria-busy="true"><div class="loading-state"><span class="spinner"></span> Abriendo la estantería…</div></div>
       </section>
       <aside class="catalogue-note"><i data-lucide="book-marked" aria-hidden="true"></i><p>Una colección personal, no un servicio de reproducción. Aquí se guardan las fichas, no los archivos de audio. Los títulos sin tipo confirmado aparecen como «Sin clasificar».</p></aside>
     </main>
-    <footer><span>La audiolibroteca del Tori</span><span>Hecho para recordar lo escuchado.</span><span>Torija · v1.4.0</span></footer>
+    <footer><span>La audiolibroteca del Tori</span><span>Hecho para recordar lo escuchado.</span><span>Torija · v1.5.0</span></footer>
     <dialog id="detail-dialog" aria-labelledby="detail-heading"></dialog>
     <dialog id="login-dialog" aria-labelledby="login-heading">
       <div class="dialog-top"><span class="eyebrow">ACCESO PRIVADO</span><button type="button" class="icon-button" data-close aria-label="Cerrar"><i data-lucide="x"></i></button></div>

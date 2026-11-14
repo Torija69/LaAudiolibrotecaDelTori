@@ -2,7 +2,7 @@
 
 Catálogo personal de audiolibros con consulta pública y administración privada. Diseño Torija, variante Taller, con pequeños iconos de libros y fuentes locales Cabinet Grotesk y Satoshi.
 
-- **Versión:** 1.4.0, 14 de noviembre de 2026.
+- **Versión:** 1.5.0, 14 de noviembre de 2026.
 - **Web:** https://torija69.github.io/LaAudiolibrotecaDelTori/
 - **Patrón:** web estática con Supabase.
 - **Código público:** autorización expresa del propietario para publicar código y GitHub Pages.
@@ -14,7 +14,7 @@ Catálogo personal de audiolibros con consulta pública y administración privad
 - Consultar fichas y ver las series en orden, con precuelas diferenciadas.
 - Ver la portada, el resumen, la reseña personal y la valoración de 1 a 5 estrellas de cada libro; ordenar por mejor valorados.
 - Subir, cambiar o quitar portadas desde el formulario de administración.
-- Ver las infografías de cada libro y ampliarlas; filtrar los libros con o sin infografía. El administrador elige una por libro, reordena, borra y añade nuevas desde la ficha.
+- Recorrer todas las infografías en la vista «Infografías», como tarjetas que llevan a la ficha de su libro. Ver las infografías de cada libro y ampliarlas (el administrador también las borra desde la vista ampliada); filtrar los libros con o sin infografía. El administrador elige una por libro, reordena, borra y añade nuevas desde la ficha.
 - Entrar con correo y contraseña de Supabase para añadir y editar.
 - Crear tipos y series desde el mismo formulario, en una transacción.
 - Consultar el original del Excel y las observaciones de importación solo como administrador.

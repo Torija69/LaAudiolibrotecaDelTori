@@ -38,3 +38,8 @@ form fieldset{border:0;margin:0;padding:0;min-width:0;display:flex;flex-directio
 @media(max-width:480px){.infographic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.image-dialog{padding:12px}.image-nav .button{padding:8px 10px;font-size:12px}.image-nav .quiet{display:none}.image-stage img{max-height:calc(100dvh - 150px)}}
 .infographic-grid.admin{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.infographic-tools{flex-wrap:nowrap}.mini-button.danger{margin-left:auto}
 @media(max-width:480px){.infographic-grid.admin{gap:10px}.infographic-tools{gap:3px}.mini-button{min-width:30px;min-height:32px;padding:4px 5px}.mini-label{display:none}}
+
+/* v1.5.0 · Galería de infografías y borrar desde la vista ampliada */
+.infographic-card-frame{position:relative;aspect-ratio:3/4;width:100%;margin:0 0 14px;border-radius:10px;overflow:hidden;background:var(--sage);border:1px solid var(--line);flex-shrink:0}.infographic-card-frame img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}.infographic-card .card-bottom svg{width:14px;height:14px}.infographic-card .card-body h3{font-size:18px}
+.image-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.danger-button{color:#8a2f22;border-color:#d9b3a8}.danger-button:hover{background:#f6e7e2;border-color:#b9786a}.image-dialog.busy{opacity:.7;pointer-events:none}
+@media(max-width:480px){.infographic-card .card-body h3{font-size:15px}.image-nav{gap:6px}.image-nav .nav-label{display:none}.image-actions .quiet{display:none}.image-actions .button{padding:8px 10px;font-size:12px}}

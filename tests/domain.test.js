@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook,starsLabel,visibleInfographics} from '../src/domain.js';
+import {fold,escapeHTML,safeURL,selectBooks,orderedSeries,validateBook,starsLabel,visibleInfographics,galleryItems} from '../src/domain.js';
 const books=[
   {id:'a',title:'El día',credits:'Álvaro',genre_id:'g1',genre:{name:'Fantasía'},series_id:'s1',series:{name:'Serie Á'},series_order:2,source_number:1,created_at:'2026-01-01',status:'Escuchado',needs_review:false},
   {id:'b',title:'Otra',credits:'Beatriz',genre_id:'g2',genre:{name:'Sin clasificar'},series_id:null,series_order:null,source_number:2,created_at:'2026-01-02',status:'Pendiente',needs_review:true},
@@ -52,4 +52,14 @@ test('v1.4.0 el público ve la elegida o todas las candidatas en orden',()=>{
   assert.deepEqual(visibleInfographics(chosen).map(i=>i.id),['x']);
   assert.deepEqual(visibleInfographics(chosen,true).map(i=>i.id),['y','x']);
   assert.deepEqual(visibleInfographics({}),[]);
+});
+test('galería: una tarjeta por infografía visible, en el orden del catálogo',()=>{
+  const lib=[
+    {...books[0],infografias:[{id:'i2',orden:20,elegida:false},{id:'i1',orden:10,elegida:false}]},
+    {...books[1],infografias:[{id:'j1',orden:10,elegida:false},{id:'j2',orden:20,elegida:true}]},
+    {...books[2],infografias:[]}
+  ];
+  assert.deepEqual(galleryItems(lib,{sort:'title'}).map(x=>x.item.id),['i1','i2','j2']);
+  assert.deepEqual(galleryItems(lib,{sort:'title'},true).map(x=>x.item.id),['i1','i2','j1','j2']);
+  assert.deepEqual(galleryItems(lib,{q:'otra',sort:'title'}).map(x=>x.book.id),['b']);
 });
